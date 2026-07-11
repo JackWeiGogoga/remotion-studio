@@ -18,9 +18,11 @@ npm run build
 docs/            Production and visual documentation
 packages/        Shared workspace packages
 public/shared/   Shared fonts, audio, and brand assets
-public/videos/   Assets namespaced by video ID
+public/videos/   Approved render assets namespaced by video ID
+resources/voices/ Local TTS reference voices, ignored by Git
 scripts/         Repository automation
 src/videos/      Video compositions and scenes
+.tmp/tts/        Temporary TTS output, ignored by Git
 out/             Generated renders, ignored by Git
 ```
 
