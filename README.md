@@ -1,54 +1,31 @@
-# Remotion video
+# Remotion Studio
 
-<p align="center">
-  <a href="https://github.com/remotion-dev/logo">
-    <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-dark.apng">
-      <img alt="Animated Remotion Logo" src="https://github.com/remotion-dev/logo/raw/main/animated-logo-banner-light.gif">
-    </picture>
-  </a>
-</p>
-
-Welcome to your Remotion project!
+Personal workspace for building videos with Remotion. The repository currently contains only the base scaffold and a blank composition used to verify that Remotion Studio starts correctly.
 
 ## Commands
 
-**Install Dependencies**
-
-```console
-npm i
-```
-
-**Start Preview**
-
-```console
+```bash
+npm install
 npm run dev
+npm run lint
+npm run build
 ```
 
-**Render video**
+## Structure
 
-```console
-npx remotion render
+```text
+.agents/skills/  Repository-specific agent workflows
+docs/            Production and visual documentation
+packages/        Shared workspace packages
+public/shared/   Shared fonts, audio, and brand assets
+public/videos/   Assets namespaced by video ID
+scripts/         Repository automation
+src/videos/      Video compositions and scenes
+out/             Generated renders, ignored by Git
 ```
 
-**Upgrade Remotion**
-
-```console
-npx remotion upgrade
-```
-
-## Docs
-
-Get started with Remotion by reading the [fundamentals page](https://www.remotion.dev/docs/the-fundamentals).
-
-## Help
-
-We provide help on our [Discord server](https://discord.gg/6VzzNDwUwV).
-
-## Issues
-
-Found an issue with Remotion? [File an issue here](https://github.com/remotion-dev/remotion/issues/new).
+Tailwind CSS is available for static layout and styling. Frame-dependent animation must be driven by Remotion APIs such as `useCurrentFrame()` and `interpolate()` rather than CSS transitions or animation classes.
 
 ## License
 
-Note that for some entities a company license is needed. [Read the terms here](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md).
+This repository is private and unlicensed. Remotion has separate licensing terms for some organizations; see the [Remotion license](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md).
