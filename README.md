@@ -2,6 +2,16 @@
 
 Personal workspace for building videos with Remotion. The repository currently contains only the base scaffold and a blank composition used to verify that Remotion Studio starts correctly.
 
+## Bootstrap
+
+The repository was initialized with the official Remotion CLI:
+
+```bash
+npx create-video@latest --yes --blank --no-tailwind remotion-studio
+```
+
+At initialization time, `create-video@4.0.487` was resolved. The generated scaffold included Tailwind CSS v4 integration, which was intentionally retained for static styling.
+
 ## Commands
 
 ```bash
