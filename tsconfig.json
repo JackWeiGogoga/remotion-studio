@@ -11,10 +11,9 @@
     "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,
-    "baseUrl": ".",
     "paths": {
-      "@remotion-studio/video-themes": ["packages/video-themes/src/index.ts"],
-      "@remotion-studio/remotion-kit": ["packages/remotion-kit/src/index.ts"]
+      "@remotion-studio/video-themes": ["./packages/video-themes/src/index.ts"],
+      "@remotion-studio/remotion-kit": ["./packages/remotion-kit/src/index.ts"]
     }
   },
   "exclude": ["remotion.config.ts"]
