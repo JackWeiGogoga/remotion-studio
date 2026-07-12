@@ -514,7 +514,6 @@ const MediaSystemSlide = () => (
     <ContentLayout
       variant="split"
       ratio="2:3"
-      align="center"
       primary={
         <Stack gap="lg">
           <PageIntro
