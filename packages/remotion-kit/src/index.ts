@@ -3,6 +3,7 @@ export {
   Caption,
   Eyebrow,
   FadeIn,
+  MediaFigure,
   MediaFrame,
   Prompt,
   Rule,
@@ -15,6 +16,7 @@ export {
 } from "./components";
 export type {
   EyebrowMarker,
+  MediaFigureProps,
   MediaFrameProps,
   MediaFrameVariant,
 } from "./components";

@@ -243,8 +243,31 @@ const ratioTracks: Record<ContentLayoutRatio, [number, number]> = {
 const LayoutSlot = ({
   children,
   style,
-}: PropsWithChildren<{ style?: CSSProperties }>) => (
-  <div style={{ minWidth: 0, minHeight: 0, ...style }}>{children}</div>
+  align = "stretch",
+}: PropsWithChildren<{
+  style?: CSSProperties;
+  align?: CSSProperties["alignItems"];
+}>) => (
+  <div
+    style={{
+      boxSizing: "border-box",
+      width: "100%",
+      height: "100%",
+      minWidth: 0,
+      minHeight: 0,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent:
+        align === "center"
+          ? "center"
+          : align === "flex-end"
+            ? "flex-end"
+            : "flex-start",
+      ...style,
+    }}
+  >
+    {children}
+  </div>
 );
 
 export const ContentLayout = ({
@@ -286,6 +309,7 @@ export const ContentLayout = ({
         }}
       >
         <LayoutSlot
+          align={align}
           style={{
             width: "100%",
             maxWidth: theme.layout.centerMaxWidth,
@@ -316,9 +340,15 @@ export const ContentLayout = ({
           ...style,
         }}
       >
-        <LayoutSlot style={secondaryStyle}>{secondary}</LayoutSlot>
-        <LayoutSlot style={primaryStyle}>{primary}</LayoutSlot>
-        <LayoutSlot style={tertiaryStyle}>{tertiary}</LayoutSlot>
+        <LayoutSlot align={align} style={secondaryStyle}>
+          {secondary}
+        </LayoutSlot>
+        <LayoutSlot align={align} style={primaryStyle}>
+          {primary}
+        </LayoutSlot>
+        <LayoutSlot align={align} style={tertiaryStyle}>
+          {tertiary}
+        </LayoutSlot>
       </div>
     );
   }
@@ -343,15 +373,22 @@ export const ContentLayout = ({
           ...style,
         }}
       >
-        <LayoutSlot style={firstStyle}>{first}</LayoutSlot>
-        <LayoutSlot style={secondStyle}>{second}</LayoutSlot>
+        <LayoutSlot align={align} style={firstStyle}>
+          {first}
+        </LayoutSlot>
+        <LayoutSlot align={align} style={secondStyle}>
+          {second}
+        </LayoutSlot>
       </div>
     );
   }
 
   return (
     <div style={{ width: "100%", height: "100%", ...style }}>
-      <LayoutSlot style={{ width: "100%", height: "100%", ...primaryStyle }}>
+      <LayoutSlot
+        align={align}
+        style={{ width: "100%", height: "100%", ...primaryStyle }}
+      >
         {primary}
       </LayoutSlot>
     </div>

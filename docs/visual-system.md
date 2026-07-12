@@ -88,7 +88,20 @@ Do not wrap text-only panels, section copy, typography examples, or ordinary exp
 
 Use `MediaFrame` for screenshots, product shots, and stable image crops. It accepts public-relative paths such as `shared/images/example.png`; the component resolves them with Remotion's asset pipeline. Use `fit="cover"` for editorial crops and `fit="contain"` for UI screenshots or product shots where losing information would be misleading. Set `aspectRatio`, `objectPosition`, and `variant` deliberately instead of letting the source image shape drive the scene layout.
 
-`MediaFrame` labels are subtle metadata rows, not black corner stickers. Prefer figure captions below media when naming a source, screenshot, or asset. Labels and captions must not cover the image content or touch the frame edge.
+`MediaFrame` labels are subtle metadata rows, not black corner stickers. Use `MediaFigure` whenever a source, screenshot, or asset needs a caption below it. `MediaFigure` reserves a non-shrinking caption row and scales the media frame inside the remaining parent slot, so neither the image nor its caption can enter the page subtitle region. Do not recreate this pattern with an unconstrained `Stack`.
+
+Place `MediaFigure` inside a bounded `ContentLayout` slot and give the slot a definite height. Set `aspectRatio` and optional `maxWidth`; do not set a fixed media height based on the source image. Landscape media defaults to `fitAxis="width"`, while portrait and square media default to `fitAxis="height"`. Override the axis only when a narrow column should constrain a portrait asset by width. The image itself still uses `fit="contain"` when losing source content would be misleading.
+
+```tsx
+<MediaFigure
+  caption="Source cover"
+  src="videos/example/images/cover.webp"
+  aspectRatio="1080 / 1526"
+  fit="contain"
+  variant="screen"
+  maxWidth={610}
+/>
+```
 
 `MediaFrame` is named as a media container, but its built-in `src` path is for static images. Animated GIFs should use Remotion's `AnimatedImage`, and videos should use the appropriate video component inside a frame wrapper or a future dedicated wrapper. Do not rely on browser-native GIF playback or CSS animation timing for rendered output.
 
@@ -96,7 +109,7 @@ For long images, use a fixed-height `MediaFrame` viewport with `overflow: hidden
 
 ## Code
 
-Use `CodeFrame` for named files and `CodeBlock` when the surrounding scene already provides a frame. Keep line numbers on for walkthroughs, and use `focusLines` or `focusSteps` to direct attention without hiding context. Long examples should be split across scenes instead of shrinking the code scale.
+Use `CodeFrame` for named files and `CodeBlock` when the surrounding scene already provides a frame. The filename row is light, quiet metadata: do not turn it into black terminal chrome or prefix filenames with a `$` prompt. Keep line numbers on for walkthroughs, and use `focusLines` or `focusSteps` to direct attention without hiding context. Long examples should be split across scenes instead of shrinking the code scale.
 
 Run `npm run highlight-code` to convert source files into `HighlightedCode` JSON before rendering. Code Hike highlighting is asynchronous, so it belongs in this deterministic preprocessing step rather than inside a frame component. The generated tokens use the code colors from `tokens.ts`; frame rendering only reads serializable data.
 

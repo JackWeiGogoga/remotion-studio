@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { ReactNode } from "react";
 import {
   AnimatedImage,
   Composition,
@@ -26,6 +26,7 @@ import {
   type HighlightedCode,
   KineticTitle,
   LineChart,
+  MediaFigure,
   MediaFrame,
   PageIntro,
   PageLayout,
@@ -82,23 +83,6 @@ const colorRows = [
   ["弱注", "muted", theme.colors.muted],
   ["强调", "primary", theme.colors.primary],
 ] as const;
-
-const MediaFigure = ({
-  children,
-  caption,
-  style,
-}: {
-  children: ReactNode;
-  caption: ReactNode;
-  style?: CSSProperties;
-}) => (
-  <Stack gap="xs" style={{ width: "100%", ...style }}>
-    {children}
-    <Caption size="label" align="center" maxWidth="100%">
-      {caption}
-    </Caption>
-  </Stack>
-);
 
 const TopicChip = ({ children }: { children: ReactNode }) => (
   <span
@@ -556,29 +540,28 @@ const MediaSystemSlide = () => (
           align="center"
           style={{ height: "100%" }}
         >
-          <MediaFigure caption="推文截图 / contain" style={{ flex: 1.4 }}>
-            <MediaFrame
-              src="videos/style-guide/images/tweet.png"
-              alt="Daniel Kokotajlo tweet screenshot"
-              aspectRatio="970 / 346"
-              fit="contain"
-              variant="raised"
-              padding="xs"
-              width="100%"
-            />
-          </MediaFigure>
-          <MediaFigure caption="AI 2027 / contain" style={{ flex: 0.8 }}>
-            <MediaFrame
-              src="videos/style-guide/images/ai-2027.webp"
-              alt="AI 2027 cover"
-              aspectRatio="1080 / 1526"
-              fit="contain"
-              objectPosition="center top"
-              variant="screen"
-              padding="xs"
-              width="100%"
-            />
-          </MediaFigure>
+          <MediaFigure
+            caption="推文截图 / contain"
+            src="videos/style-guide/images/tweet.png"
+            alt="Daniel Kokotajlo tweet screenshot"
+            aspectRatio="970 / 346"
+            fit="contain"
+            variant="raised"
+            padding="xs"
+            style={{ flex: 1.4 }}
+          />
+          <MediaFigure
+            caption="AI 2027 / contain"
+            src="videos/style-guide/images/ai-2027.webp"
+            alt="AI 2027 cover"
+            aspectRatio="1080 / 1526"
+            fit="contain"
+            objectPosition="center top"
+            variant="screen"
+            padding="xs"
+            fitAxis="width"
+            style={{ flex: 0.8 }}
+          />
         </Stack>
       }
     />
@@ -1137,7 +1120,7 @@ const CodeMotionSlide = () => (
   <GuidePage
     section="代码与动效 / Code + Motion"
     index="10 / 13"
-    subtitle="代码先离线高亮，再按当前帧聚焦；命令行样式只在真正的代码语境中出现。"
+    subtitle="代码先离线高亮，再按当前帧聚焦；浅色文件栏只提供上下文，不抢夺视觉焦点。"
   >
     <ContentLayout
       variant="split"
@@ -1264,18 +1247,14 @@ const TweetStory = () => (
     media={
       <MediaFigure
         caption="Daniel Kokotajlo 推文截图"
-        style={{ maxWidth: 980 }}
-      >
-        <MediaFrame
-          src="videos/style-guide/images/tweet.png"
-          alt="Daniel Kokotajlo tweet about AI 2027 and AI 2040 Plan A"
-          aspectRatio="970 / 346"
-          fit="contain"
-          variant="raised"
-          padding="xs"
-          width="100%"
-        />
-      </MediaFigure>
+        src="videos/style-guide/images/tweet.png"
+        alt="Daniel Kokotajlo tweet about AI 2027 and AI 2040 Plan A"
+        aspectRatio="970 / 346"
+        fit="contain"
+        variant="raised"
+        padding="xs"
+        maxWidth={980}
+      />
     }
     ratio="2:3"
   />
@@ -1290,18 +1269,16 @@ const Ai2027Story = () => (
     title="如果你没读过《AI 2027》，这里补个课。"
     body="它不是新闻摘要，而是一份按时间推进的未来场景：从模型能力、组织竞争，到 governance 失效的连锁反应。"
     media={
-      <MediaFigure caption="《AI 2027》原文封面" style={{ maxWidth: 610 }}>
-        <MediaFrame
-          src="videos/style-guide/images/ai-2027.webp"
-          alt="AI 2027 article cover"
-          aspectRatio="1080 / 1526"
-          fit="contain"
-          variant="screen"
-          padding="xs"
-          width="100%"
-          style={{ maxHeight: 820 }}
-        />
-      </MediaFigure>
+      <MediaFigure
+        caption="《AI 2027》原文封面"
+        src="videos/style-guide/images/ai-2027.webp"
+        alt="AI 2027 article cover"
+        aspectRatio="1080 / 1526"
+        fit="contain"
+        variant="screen"
+        padding="xs"
+        maxWidth={610}
+      />
     }
     ratio="2:3"
   />
@@ -1316,26 +1293,25 @@ const ForecastProcessStory = () => (
     title="2025 年 4 月，他们发布了一份逐月推演的 AI 未来场景。"
     body="参与者包括 Daniel Kokotajlo、Scott Alexander、Eli Lifland、Thomas Larsen 和 Romeo Dean。"
     media={
-      <MediaFigure caption="AI 2027 逐月推演过程" style={{ maxWidth: 700 }}>
-        <MediaFrame
-          aspectRatio="640 / 667"
-          variant="screen"
-          padding="xs"
-          width="100%"
-        >
-          <AnimatedImage
-            src={staticFile("videos/style-guide/images/forecast-process.gif")}
-            width={640}
-            height={667}
-            fit="cover"
-            loopBehavior="loop"
-            durationInFrames={storyDuration}
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-          />
-        </MediaFrame>
+      <MediaFigure
+        caption="AI 2027 逐月推演过程"
+        aspectRatio="640 / 667"
+        variant="screen"
+        padding="xs"
+        maxWidth={700}
+      >
+        <AnimatedImage
+          src={staticFile("videos/style-guide/images/forecast-process.gif")}
+          width={640}
+          height={667}
+          fit="cover"
+          loopBehavior="loop"
+          durationInFrames={storyDuration}
+          style={{
+            width: "100%",
+            height: "100%",
+          }}
+        />
       </MediaFigure>
     }
     ratio="1:1"

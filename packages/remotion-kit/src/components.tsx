@@ -303,6 +303,19 @@ export type MediaFrameProps = PropsWithChildren<{
   contentStyle?: CSSProperties;
 }>;
 
+export type MediaFigureProps = Omit<
+  MediaFrameProps,
+  "width" | "height" | "style"
+> & {
+  caption: ReactNode;
+  captionAlign?: CSSProperties["textAlign"];
+  captionGap?: ThemeSpaceName | number;
+  fitAxis?: "width" | "height";
+  maxWidth?: CSSProperties["maxWidth"];
+  style?: CSSProperties;
+  frameStyle?: CSSProperties;
+};
+
 export const MediaFrame = ({
   children,
   src,
@@ -474,6 +487,98 @@ export const MediaFrame = ({
           ))
         )}
       </div>
+    </div>
+  );
+};
+
+const getAspectRatioNumber = (value: CSSProperties["aspectRatio"]): number => {
+  if (typeof value === "number") {
+    return value > 0 ? value : 16 / 9;
+  }
+
+  const [rawWidth, rawHeight] = String(value ?? "").split("/");
+  const width = Number(rawWidth);
+  const height = Number(rawHeight);
+
+  if (Number.isFinite(width) && Number.isFinite(height) && height > 0) {
+    return width / height;
+  }
+
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) && numericValue > 0
+    ? numericValue
+    : 16 / 9;
+};
+
+export const MediaFigure = ({
+  caption,
+  captionAlign = "center",
+  captionGap = "xs",
+  fitAxis,
+  maxWidth = "100%",
+  aspectRatio = "landscape",
+  variant = "stroke",
+  style,
+  frameStyle,
+  ...mediaFrameProps
+}: MediaFigureProps) => {
+  const resolvedAspectRatio = resolveAspectRatio(aspectRatio);
+  const ratio = getAspectRatioNumber(resolvedAspectRatio);
+  const resolvedFitAxis = fitAxis ?? (ratio > 1 ? "width" : "height");
+  const shadowReserve =
+    variant === "raised" || variant === "screen" ? theme.space.xs : 0;
+
+  return (
+    <div
+      style={{
+        boxSizing: "border-box",
+        width: "100%",
+        height: "100%",
+        maxWidth,
+        maxHeight: "100%",
+        minWidth: 0,
+        minHeight: 0,
+        display: "grid",
+        gridTemplateRows: "minmax(0, 1fr) auto",
+        rowGap:
+          typeof captionGap === "number" ? captionGap : theme.space[captionGap],
+        ...style,
+      }}
+    >
+      <div
+        style={{
+          boxSizing: "border-box",
+          width: "100%",
+          minWidth: 0,
+          minHeight: 0,
+          display: "grid",
+          placeItems: "center",
+          overflow: "hidden",
+          paddingRight: shadowReserve,
+          paddingBottom: shadowReserve,
+        }}
+      >
+        <MediaFrame
+          {...mediaFrameProps}
+          aspectRatio={resolvedAspectRatio}
+          variant={variant}
+          width={resolvedFitAxis === "width" ? "100%" : "auto"}
+          height={resolvedFitAxis === "height" ? "100%" : "auto"}
+          style={{
+            maxWidth: "100%",
+            maxHeight: "100%",
+            ...frameStyle,
+          }}
+        />
+      </div>
+      <Caption
+        size="label"
+        align={captionAlign}
+        maxWidth="100%"
+        style={{ width: "100%" }}
+      >
+        {caption}
+      </Caption>
     </div>
   );
 };

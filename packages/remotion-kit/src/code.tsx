@@ -317,7 +317,7 @@ export const CodeFrame = ({
       display: "grid",
       gridTemplateRows: `${theme.code.headerHeight}px minmax(0, 1fr)`,
       overflow: "hidden",
-      border: `${theme.stroke.hairline}px solid ${theme.colors.ink}`,
+      border: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
       borderRadius: theme.radius.media,
       background: theme.code.background,
       ...style,
@@ -330,10 +330,12 @@ export const CodeFrame = ({
         justifyContent: "space-between",
         minWidth: 0,
         background: theme.code.headerBackground,
-        color: theme.colors.canvas,
+        color: theme.colors.body,
+        borderBottom: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
         padding: `0 ${theme.code.paddingX}px`,
         fontFamily: theme.typography.monoFamily,
         fontSize: theme.typography.size.label,
+        fontWeight: theme.typography.weight.medium,
         lineHeight: 1,
       }}
     >
@@ -345,14 +347,14 @@ export const CodeFrame = ({
           whiteSpace: "nowrap",
         }}
       >
-        <span
-          style={{ color: theme.colors.primary, marginRight: theme.space.xs }}
-        >
-          $
-        </span>
         {filename}
       </span>
-      <span style={{ color: theme.colors.mutedSoft }}>
+      <span
+        style={{
+          color: theme.colors.muted,
+          fontWeight: theme.typography.weight.regular,
+        }}
+      >
         {languageLabel ?? code.lang}
       </span>
     </div>

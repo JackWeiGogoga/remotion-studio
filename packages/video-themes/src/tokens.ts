@@ -143,7 +143,7 @@ export const theme = {
   },
   code: {
     background: "#ebe8e3",
-    headerBackground: "#0a0a0a",
+    headerBackground: "#e9e6e2",
     gutter: "#d8d4cb",
     focusTransparent: "#ff5a1f00",
     focusBackground: "#ff5a1f24",
