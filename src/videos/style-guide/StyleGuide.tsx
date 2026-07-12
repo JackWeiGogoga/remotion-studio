@@ -20,9 +20,11 @@ import {
   Eyebrow,
   FadeIn,
   type HighlightedCode,
+  KineticTitle,
   LineChart,
   MediaFrame,
   RacingBarChart,
+  RevealText,
   Rule,
   SafeArea,
   Scene,
@@ -38,20 +40,21 @@ const highlightedCode = codeExample as unknown as HighlightedCode;
 const fps = canvasPresets.landscape.fps;
 const coverDuration = seconds(4, fps);
 const typeDuration = seconds(4, fps);
+const textMotionDuration = seconds(5, fps);
 const mediaDuration = seconds(4, fps);
 const chartLineDuration = seconds(4, fps);
 const chartRaceDuration = seconds(7, fps);
 const tableDuration = seconds(4, fps);
 const codeMotionDuration = seconds(4, fps);
 const storyDuration = seconds(4, fps);
-const narrativeStart =
-  coverDuration +
-  typeDuration +
-  mediaDuration +
-  chartLineDuration +
-  chartRaceDuration +
-  tableDuration +
-  codeMotionDuration;
+const typeStart = coverDuration;
+const textMotionStart = typeStart + typeDuration;
+const mediaStart = textMotionStart + textMotionDuration;
+const chartLineStart = mediaStart + mediaDuration;
+const chartRaceStart = chartLineStart + chartLineDuration;
+const tableStart = chartRaceStart + chartRaceDuration;
+const codeMotionStart = tableStart + tableDuration;
+const narrativeStart = codeMotionStart + codeMotionDuration;
 
 export const styleGuideSchema = z.object({
   headline: z.string(),
@@ -278,6 +281,78 @@ const TypographySlide = () => (
         <ColorBoard />
       </Stack>
       <TypeScalePanel />
+    </Stack>
+  </Stack>
+);
+
+const TextMotionSlide = () => (
+  <Stack style={{ height: "100%" }}>
+    <Rule style={slideRuleStyle} />
+    <Stack direction="row" gap="xl" align="stretch" style={{ flex: 1 }}>
+      <Stack gap="lg" style={{ width: 540 }}>
+        <SectionText
+          eyebrow="文字动效 / Text Motion"
+          title="逐字出现适合转场，不适合长段落。"
+          body="RevealText 负责可组合的拆字、拆词、拆行；KineticTitle 负责章节标题。所有动画都由当前帧驱动。"
+        />
+        <Stack gap="sm">
+          <BodyText size="caption">char：中文短标题，制造节奏。</BodyText>
+          <BodyText size="caption">word：英文短句，保持可读性。</BodyText>
+          <BodyText size="caption">line：两到三行判断，逐层出现。</BodyText>
+        </Stack>
+      </Stack>
+      <div
+        style={{
+          flex: 1,
+          minWidth: 0,
+          height: "100%",
+          boxSizing: "border-box",
+          borderTop: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
+          borderBottom: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
+          padding: `${theme.space.xl}px ${theme.space.lg}px ${theme.space.lg}px`,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "space-between",
+        }}
+      >
+        <KineticTitle
+          eyebrow="04 / 章节转场"
+          title={"未来不是\n线性发生"}
+          caption="KineticTitle / char reveal / rise"
+          from={6}
+          by="char"
+          stagger={2}
+          maxWidth={920}
+        />
+        <Rule />
+        <Stack gap="md">
+          <Stack gap="xs">
+            <Caption size="label">RevealText / word / soft</Caption>
+            <BodyText size="caption" maxWidth={980}>
+              <RevealText
+                text="AI systems move from tools to actors."
+                by="word"
+                preset="soft"
+                from={54}
+                stagger={5}
+              />
+            </BodyText>
+          </Stack>
+          <Stack gap="xs">
+            <Caption size="label">RevealText / line / slide</Caption>
+            <Title size="subtitle" maxWidth={980}>
+              <RevealText
+                text={"先给判断\n再补证据"}
+                by="line"
+                preset="slide"
+                from={82}
+                stagger={10}
+                x={44}
+              />
+            </Title>
+          </Stack>
+        </Stack>
+      </div>
     </Stack>
   </Stack>
 );
@@ -927,56 +1002,46 @@ export const StyleGuide = ({ headline, caption }: StyleGuideProps) => (
       <Sequence durationInFrames={coverDuration} layout="none">
         <CoverSlide headline={headline} caption={caption} />
       </Sequence>
-      <Sequence
-        from={coverDuration}
-        durationInFrames={typeDuration}
-        layout="none"
-      >
+      <Sequence from={typeStart} durationInFrames={typeDuration} layout="none">
         <TypographySlide />
       </Sequence>
       <Sequence
-        from={coverDuration + typeDuration}
+        from={textMotionStart}
+        durationInFrames={textMotionDuration}
+        layout="none"
+      >
+        <TextMotionSlide />
+      </Sequence>
+      <Sequence
+        from={mediaStart}
         durationInFrames={mediaDuration}
         layout="none"
       >
         <MediaSystemSlide />
       </Sequence>
       <Sequence
-        from={coverDuration + typeDuration + mediaDuration}
+        from={chartLineStart}
         durationInFrames={chartLineDuration}
         layout="none"
       >
         <LlmTimelineChartSlide />
       </Sequence>
       <Sequence
-        from={coverDuration + typeDuration + mediaDuration + chartLineDuration}
+        from={chartRaceStart}
         durationInFrames={chartRaceDuration}
         layout="none"
       >
         <RacingBarChartSlide />
       </Sequence>
       <Sequence
-        from={
-          coverDuration +
-          typeDuration +
-          mediaDuration +
-          chartLineDuration +
-          chartRaceDuration
-        }
+        from={tableStart}
         durationInFrames={tableDuration}
         layout="none"
       >
         <TableSystemSlide />
       </Sequence>
       <Sequence
-        from={
-          coverDuration +
-          typeDuration +
-          mediaDuration +
-          chartLineDuration +
-          chartRaceDuration +
-          tableDuration
-        }
+        from={codeMotionStart}
         durationInFrames={codeMotionDuration}
         layout="none"
       >

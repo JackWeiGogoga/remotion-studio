@@ -58,3 +58,11 @@ export type {
   DataTableProps,
   DataTableRow,
 } from "./tables";
+export { KineticTitle, RevealText } from "./text-effects";
+export type {
+  KineticTitleProps,
+  RevealTextBy,
+  RevealTextOrder,
+  RevealTextPreset,
+  RevealTextProps,
+} from "./text-effects";

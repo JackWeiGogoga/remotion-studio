@@ -93,6 +93,8 @@ Use Remotion frame primitives only: `useCurrentFrame()`, `interpolate()`, `sprin
 
 Use short deterministic entrances, exits, and scene transitions from `theme.motion.duration` and `theme.motion.easing`. Reveal from an element's final layout slot with opacity and translate; do not animate readable elements through occupied space.
 
+Use `RevealText` for split text motion and `KineticTitle` for standalone chapter or transition titles. Use `by="char"` only for short Chinese titles, `by="word"` for English phrases, and `by="line"` for two or three short statement lines. Do not animate long paragraphs character by character; split the narration across scenes instead.
+
 ## Captions And Subtitles
 
 Place subtitles inside the safe area, usually near the lower third for landscape and above platform UI risk zones for portrait. Keep lines short, break on semantic phrases, and avoid more than two subtitle lines at once.
@@ -115,6 +117,7 @@ Approved voiceover belongs in `public/videos/<video-id>/audio/voiceover/`. Tempo
 - Text-only areas separated by rules or grid alignment instead of raised cards.
 - Frame-driven chart reveals that explain comparison, trend, or composition.
 - Frame-driven fade and translate entrances.
+- `RevealText` and `KineticTitle` for short transition titles and emphasis lines.
 - Black terminal bars only for real command/code contexts.
 
 ## Forbidden
@@ -123,6 +126,7 @@ Approved voiceover belongs in `public/videos/<video-id>/audio/voiceover/`. Tempo
 - Marketing hero gradients, decorative blobs, glassmorphism, soft floating cards, or large rounded pills.
 - Raised `MediaFrame` wrappers around pure text blocks or section explanations.
 - Long paragraphs squeezed into a single frame.
+- Long paragraphs animated character by character.
 - Large areas filled with status colors.
 - Black `$ ...` command bars used as ordinary titles, table captions, chart labels, or decorative section headers.
 - Machine-specific absolute asset paths in tracked code.
