@@ -15,6 +15,8 @@ import {
   Caption,
   ChartFrame,
   CodeFrame,
+  ContentLayout,
+  CoverPage,
   DataTable,
   type DataTableColumn,
   Eyebrow,
@@ -23,11 +25,12 @@ import {
   KineticTitle,
   LineChart,
   MediaFrame,
+  PageIntro,
+  PageLayout,
   RacingBarChart,
   RevealText,
   Rule,
-  SafeArea,
-  Scene,
+  SectionPage,
   Stack,
   TextFit,
   Title,
@@ -39,6 +42,8 @@ import codeExample from "./fixtures/code-example.highlighted.json";
 const highlightedCode = codeExample as unknown as HighlightedCode;
 const fps = canvasPresets.landscape.fps;
 const coverDuration = seconds(4, fps);
+const sectionDuration = seconds(3, fps);
+const layoutDuration = seconds(5, fps);
 const typeDuration = seconds(4, fps);
 const textMotionDuration = seconds(5, fps);
 const mediaDuration = seconds(4, fps);
@@ -47,7 +52,9 @@ const chartRaceDuration = seconds(7, fps);
 const tableDuration = seconds(4, fps);
 const codeMotionDuration = seconds(4, fps);
 const storyDuration = seconds(4, fps);
-const typeStart = coverDuration;
+const sectionStart = coverDuration;
+const layoutStart = sectionStart + sectionDuration;
+const typeStart = layoutStart + layoutDuration;
 const textMotionStart = typeStart + typeDuration;
 const mediaStart = textMotionStart + textMotionDuration;
 const chartLineStart = mediaStart + mediaDuration;
@@ -71,10 +78,6 @@ const colorRows = [
   ["弱注", "muted", theme.colors.muted],
   ["强调", "primary", theme.colors.primary],
 ] as const;
-
-const slideRuleStyle: CSSProperties = {
-  marginBottom: theme.space.lg,
-};
 
 const MediaFigure = ({
   children,
@@ -111,83 +114,228 @@ const TopicChip = ({ children }: { children: ReactNode }) => (
   </span>
 );
 
-const SectionText = ({
-  eyebrow,
-  title,
-  body,
-  maxWidth = 980,
+const guideBrand = "AI 未来推演 / Style Guide";
+
+const GuidePage = ({
+  children,
+  section,
+  index,
+  subtitle,
+  meta = "remotion-kit / layout system",
 }: {
-  eyebrow: ReactNode;
-  title: ReactNode;
-  body?: ReactNode;
-  maxWidth?: number;
+  children: ReactNode;
+  section: ReactNode;
+  index: ReactNode;
+  subtitle?: ReactNode;
+  meta?: ReactNode;
 }) => (
-  <Stack gap="md" style={{ maxWidth }}>
-    <Eyebrow>{eyebrow}</Eyebrow>
-    <Title size="title" maxWidth={maxWidth}>
-      {title}
-    </Title>
-    {body ? (
-      <BodyText maxWidth={maxWidth} size="caption">
-        {body}
-      </BodyText>
-    ) : null}
-  </Stack>
+  <PageLayout
+    header={{ brand: guideBrand, section, index }}
+    footer={{ subtitle, meta, page: index }}
+  >
+    {children}
+  </PageLayout>
+);
+
+const CoverLayoutDiagram = () => (
+  <div
+    style={{
+      height: 390,
+      boxSizing: "border-box",
+      border: `${theme.stroke.strong}px solid ${theme.colors.ink}`,
+      padding: theme.space.md,
+      display: "grid",
+      gridTemplateRows: "42px minmax(0, 1fr) 76px",
+      gap: theme.space.sm,
+      background: theme.colors.surface,
+    }}
+  >
+    <div
+      style={{
+        borderBottom: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
+        color: theme.colors.muted,
+        fontSize: theme.typography.size.label,
+      }}
+    >
+      NAVIGATION / 01
+    </div>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "2fr 3fr",
+        gap: theme.space.sm,
+      }}
+    >
+      <div style={{ background: theme.colors.surfaceSoft }} />
+      <div
+        style={{
+          border: `${theme.stroke.strong}px solid ${theme.colors.primary}`,
+        }}
+      />
+    </div>
+    <div
+      style={{
+        borderTop: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
+        color: theme.colors.muted,
+        fontSize: theme.typography.size.label,
+        paddingTop: theme.space.xs,
+      }}
+    >
+      SUBTITLE / META
+    </div>
+  </div>
 );
 
 const CoverSlide = ({ headline, caption }: StyleGuideProps) => (
-  <Stack style={{ height: "100%" }} justify="space-between">
-    <Stack direction="row" justify="space-between" align="flex-start">
-      <FadeIn from={0} y={20}>
-        <Stack gap="lg">
-          <Eyebrow>Style Guide / 模板演示</Eyebrow>
-          <Title size="display" maxWidth={1120}>
-            <TextFit maxChars={12} baseSize={theme.typography.size.display}>
-              {headline}
-            </TextFit>
-            <span style={{ display: "block" }}>视频模板</span>
-          </Title>
-          <BodyText maxWidth={920} size="caption">
-            {caption}
-          </BodyText>
-        </Stack>
-      </FadeIn>
-      <FadeIn from={8} y={16}>
-        <MediaFrame
-          variant="raised"
-          width={500}
-          aspectRatio="landscape"
-          padding="md"
-        >
-          <Stack gap="sm" style={{ height: "100%" }}>
-            <Caption size="label">safe area / layout check</Caption>
-            <div
-              style={{
-                flex: 1,
-                border: `${theme.stroke.strong}px solid ${theme.colors.primary}`,
-                display: "grid",
-                placeItems: "center",
-                color: theme.colors.muted,
-                fontSize: theme.typography.size.label,
-              }}
-            >
-              16:9 / 9:16 / 1:1
-            </div>
-          </Stack>
-        </MediaFrame>
-      </FadeIn>
-    </Stack>
-    <FadeIn from={16} y={12}>
+  <CoverPage
+    brand="REMOTION STUDIO / ARCHIVE MONO"
+    edition="STYLE GUIDE / 12 SCENES"
+    eyebrow="中文知识视频 / Visual System"
+    title={
+      <>
+        <TextFit maxChars={12} baseSize={theme.typography.size.display}>
+          {headline}
+        </TextFit>
+        <span style={{ display: "block" }}>统一页面模板</span>
+      </>
+    }
+    subtitle={caption}
+    visual={<CoverLayoutDiagram />}
+    footer={
       <Stack direction="row" gap="sm" style={{ flexWrap: "wrap" }}>
-        <TopicChip>中文叙事</TopicChip>
-        <TopicChip>AI 2027</TopicChip>
-        <TopicChip>MediaFrame</TopicChip>
-        <TopicChip>Charts</TopicChip>
-        <TopicChip>CodeFrame</TopicChip>
-        <TopicChip>deterministic motion</TopicChip>
+        <TopicChip>PageLayout</TopicChip>
+        <TopicChip>ContentLayout</TopicChip>
+        <TopicChip>标题 / 字幕 / 媒体</TopicChip>
+        <TopicChip>16:9 / 9:16 / 1:1</TopicChip>
       </Stack>
-    </FadeIn>
+    }
+  />
+);
+
+const SectionTransitionSlide = () => (
+  <SectionPage
+    brand={guideBrand}
+    section="01 / 页面系统"
+    index="01 / 12"
+    title={"页面先统一\n组件才有意义"}
+    subtitle="SectionPage / 章节切换 / deterministic text reveal"
+    meta="chapter transition / inverse"
+  />
+);
+
+const LayoutDiagram = ({
+  label,
+  columns,
+  rows,
+  areas,
+}: {
+  label: string;
+  columns: string;
+  rows: string;
+  areas: string[];
+}) => (
+  <Stack gap="xs">
+    <Caption size="label">{label}</Caption>
+    <div
+      style={{
+        height: 164,
+        border: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
+        padding: theme.space.sm,
+        display: "grid",
+        gridTemplateColumns: columns,
+        gridTemplateRows: rows,
+        gap: theme.space.xs,
+      }}
+    >
+      {areas.map((area, index) => (
+        <div
+          key={`${label}-${index}`}
+          style={{
+            minWidth: 0,
+            minHeight: 0,
+            background:
+              index === Math.floor(areas.length / 2)
+                ? theme.colors.surfaceStrong
+                : theme.colors.surfaceSoft,
+            borderLeft:
+              index === 0
+                ? `${theme.stroke.strong}px solid ${theme.colors.primary}`
+                : undefined,
+            color: theme.colors.muted,
+            fontSize: theme.typography.size.label,
+            display: "grid",
+            placeItems: "center",
+          }}
+        >
+          {area}
+        </div>
+      ))}
+    </div>
   </Stack>
+);
+
+const LayoutSystemSlide = () => (
+  <GuidePage
+    section="页面布局 / Layout"
+    index="02 / 12"
+    subtitle="导航、内容和字幕拥有固定槽位；内容区只选择布局，不再重新发明页面边界。"
+  >
+    <ContentLayout
+      variant="split"
+      ratio="2:3"
+      primary={
+        <Stack gap="lg">
+          <PageIntro
+            eyebrow="页面骨架 / PageLayout"
+            title="先固定页面，再组织内容。"
+            body="普通页面统一顶部导航、内容起点、底部字幕和元信息。封面与章节页是明确变体，因此差异是有意的。"
+          />
+          <Stack gap="sm">
+            <BodyText size="caption">split：图文、讲解与证据。</BodyText>
+            <BodyText size="caption">stack：时间线、前后对比。</BodyText>
+            <BodyText size="caption">focus：标题、结论、单一对象。</BodyText>
+            <BodyText size="caption">surround：中心对象与两侧注释。</BodyText>
+          </Stack>
+        </Stack>
+      }
+      secondary={
+        <div
+          style={{
+            height: "100%",
+            display: "grid",
+            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+            gap: theme.space.lg,
+            alignContent: "center",
+          }}
+        >
+          <LayoutDiagram
+            label="split / 左右"
+            columns="2fr 3fr"
+            rows="1fr"
+            areas={["COPY", "MEDIA"]}
+          />
+          <LayoutDiagram
+            label="stack / 上下"
+            columns="1fr"
+            rows="1fr 1fr"
+            areas={["TITLE", "CONTENT"]}
+          />
+          <LayoutDiagram
+            label="focus / 聚焦"
+            columns="1fr"
+            rows="1fr"
+            areas={["ONE IDEA"]}
+          />
+          <LayoutDiagram
+            label="surround / 围绕"
+            columns="0.8fr 1.6fr 0.8fr"
+            rows="1fr"
+            areas={["NOTE", "FOCUS", "NOTE"]}
+          />
+        </div>
+      }
+    />
+  </GuidePage>
 );
 
 const TypeScalePanel = () => (
@@ -269,139 +417,170 @@ const ColorBoard = () => (
 );
 
 const TypographySlide = () => (
-  <Stack style={{ height: "100%" }}>
-    <Rule style={slideRuleStyle} />
-    <Stack direction="row" gap="xl" align="stretch" style={{ flex: 1 }}>
-      <Stack gap="xl" style={{ width: 620 }}>
-        <SectionText
-          eyebrow="文字系统 / Typography"
-          title="标题先建立层级，再谈装饰。"
-          body="中文视频最常见的问题不是字体不酷，而是标题、小标题、正文抢同一个位置。模板默认把它们分成三层。"
-        />
-        <ColorBoard />
-      </Stack>
-      <TypeScalePanel />
-    </Stack>
-  </Stack>
+  <GuidePage
+    section="文字系统 / Typography"
+    index="03 / 12"
+    subtitle="标题、小标题、正文和图注各占一个层级，所有页面从同一内容基线开始。"
+  >
+    <ContentLayout
+      variant="split"
+      ratio="2:3"
+      primary={
+        <Stack gap="xl">
+          <PageIntro
+            eyebrow="文字系统 / Typography"
+            title="标题先建立层级，再谈装饰。"
+            body="中文视频最常见的问题不是字体不酷，而是标题、小标题、正文抢同一个位置。模板默认把它们分成三层。"
+          />
+          <ColorBoard />
+        </Stack>
+      }
+      secondary={<TypeScalePanel />}
+    />
+  </GuidePage>
 );
 
 const TextMotionSlide = () => (
-  <Stack style={{ height: "100%" }}>
-    <Rule style={slideRuleStyle} />
-    <Stack direction="row" gap="xl" align="stretch" style={{ flex: 1 }}>
-      <Stack gap="lg" style={{ width: 540 }}>
-        <SectionText
-          eyebrow="文字动效 / Text Motion"
-          title="逐字出现适合转场，不适合长段落。"
-          body="RevealText 负责可组合的拆字、拆词、拆行；KineticTitle 负责章节标题。所有动画都由当前帧驱动。"
-        />
-        <Stack gap="sm">
-          <BodyText size="caption">char：中文短标题，制造节奏。</BodyText>
-          <BodyText size="caption">word：英文短句，保持可读性。</BodyText>
-          <BodyText size="caption">line：两到三行判断，逐层出现。</BodyText>
-        </Stack>
-      </Stack>
-      <div
-        style={{
-          flex: 1,
-          minWidth: 0,
-          height: "100%",
-          boxSizing: "border-box",
-          borderTop: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
-          borderBottom: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
-          padding: `${theme.space.xl}px ${theme.space.lg}px ${theme.space.lg}px`,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-        }}
-      >
-        <KineticTitle
-          eyebrow="04 / 章节转场"
-          title={"未来不是\n线性发生"}
-          caption="KineticTitle / char reveal / rise"
-          from={6}
-          by="char"
-          stagger={2}
-          maxWidth={920}
-        />
-        <Rule />
-        <Stack gap="md">
-          <Stack gap="xs">
-            <Caption size="label">RevealText / word / soft</Caption>
-            <BodyText size="caption" maxWidth={980}>
-              <RevealText
-                text="AI systems move from tools to actors."
-                by="word"
-                preset="soft"
-                from={54}
-                stagger={5}
-              />
-            </BodyText>
-          </Stack>
-          <Stack gap="xs">
-            <Caption size="label">RevealText / line / slide</Caption>
-            <Title size="subtitle" maxWidth={980}>
-              <RevealText
-                text={"先给判断\n再补证据"}
-                by="line"
-                preset="slide"
-                from={82}
-                stagger={10}
-                x={44}
-              />
-            </Title>
+  <GuidePage
+    section="文字动效 / Text Motion"
+    index="04 / 12"
+    subtitle="逐字用于短中文标题，逐词用于英文短句，逐行用于两到三层判断。"
+  >
+    <ContentLayout
+      variant="split"
+      ratio="2:3"
+      primary={
+        <Stack gap="lg">
+          <PageIntro
+            eyebrow="文字动效 / Text Motion"
+            title="逐字出现适合转场，不适合长段落。"
+            body="RevealText 负责可组合的拆字、拆词、拆行；KineticTitle 负责章节标题。所有动画都由当前帧驱动。"
+          />
+          <Stack gap="sm">
+            <BodyText size="caption">char：中文短标题，制造节奏。</BodyText>
+            <BodyText size="caption">word：英文短句，保持可读性。</BodyText>
+            <BodyText size="caption">line：两到三行判断，逐层出现。</BodyText>
           </Stack>
         </Stack>
-      </div>
-    </Stack>
-  </Stack>
+      }
+      secondary={
+        <div
+          style={{
+            height: "100%",
+            boxSizing: "border-box",
+            borderTop: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
+            borderBottom: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
+            padding: `${theme.space.xl}px ${theme.space.lg}px ${theme.space.lg}px`,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          <KineticTitle
+            eyebrow="04 / 章节转场"
+            title={"未来不是\n线性发生"}
+            caption="KineticTitle / char reveal / rise"
+            from={6}
+            by="char"
+            stagger={2}
+            maxWidth={920}
+          />
+          <Rule />
+          <Stack gap="md">
+            <Stack gap="xs">
+              <Caption size="label">RevealText / word / soft</Caption>
+              <BodyText size="caption" maxWidth={980}>
+                <RevealText
+                  text="AI systems move from tools to actors."
+                  by="word"
+                  preset="soft"
+                  from={54}
+                  stagger={5}
+                />
+              </BodyText>
+            </Stack>
+            <Stack gap="xs">
+              <Caption size="label">RevealText / line / slide</Caption>
+              <Title size="subtitle" maxWidth={980}>
+                <RevealText
+                  text={"先给判断\n再补证据"}
+                  by="line"
+                  preset="slide"
+                  from={82}
+                  stagger={10}
+                  x={44}
+                />
+              </Title>
+            </Stack>
+          </Stack>
+        </div>
+      }
+    />
+  </GuidePage>
 );
 
 const MediaSystemSlide = () => (
-  <Stack style={{ height: "100%" }}>
-    <Rule style={slideRuleStyle} />
-    <Stack direction="row" gap="xl" align="center" style={{ flex: 1 }}>
-      <Stack gap="lg" style={{ width: 620 }}>
-        <SectionText
-          eyebrow="媒体系统 / Media"
-          title="图片是证据，不是背景装饰。"
-          body="截图、封面、长图和动图都进入稳定容器。标签不压在图片上，来源和说明放在图注里。"
-        />
-        <Stack gap="sm">
-          <BodyText size="caption">cover：用于叙事裁切，保留焦点。</BodyText>
-          <BodyText size="caption">
-            contain：用于截图和文档，不损失信息。
-          </BodyText>
-          <BodyText size="caption">caption：低权重说明，不抢主标题。</BodyText>
+  <GuidePage
+    section="媒体系统 / Media"
+    index="05 / 12"
+    subtitle="图片和动图进入固定内容区；图注位于媒体下方，不遮挡素材本身。"
+  >
+    <ContentLayout
+      variant="split"
+      ratio="2:3"
+      align="center"
+      primary={
+        <Stack gap="lg">
+          <PageIntro
+            eyebrow="媒体系统 / Media"
+            title="图片是证据，不是背景装饰。"
+            body="截图、封面、长图和动图都进入稳定容器。标签不压在图片上，来源和说明放在图注里。"
+          />
+          <Stack gap="sm">
+            <BodyText size="caption">cover：用于叙事裁切，保留焦点。</BodyText>
+            <BodyText size="caption">
+              contain：用于截图和文档，不损失信息。
+            </BodyText>
+            <BodyText size="caption">
+              caption：低权重说明，不抢主标题。
+            </BodyText>
+          </Stack>
         </Stack>
-      </Stack>
-      <Stack direction="row" gap="lg" align="center" style={{ flex: 1 }}>
-        <MediaFigure caption="推文截图 / contain" style={{ maxWidth: 580 }}>
-          <MediaFrame
-            src="videos/style-guide/images/tweet.png"
-            alt="Daniel Kokotajlo tweet screenshot"
-            aspectRatio="970 / 346"
-            fit="contain"
-            variant="raised"
-            padding="xs"
-            width="100%"
-          />
-        </MediaFigure>
-        <MediaFigure caption="AI 2027 / contain" style={{ maxWidth: 360 }}>
-          <MediaFrame
-            src="videos/style-guide/images/ai-2027.webp"
-            alt="AI 2027 cover"
-            aspectRatio="1080 / 1526"
-            fit="contain"
-            objectPosition="center top"
-            variant="screen"
-            padding="xs"
-            width="100%"
-          />
-        </MediaFigure>
-      </Stack>
-    </Stack>
-  </Stack>
+      }
+      secondary={
+        <Stack
+          direction="row"
+          gap="lg"
+          align="center"
+          style={{ height: "100%" }}
+        >
+          <MediaFigure caption="推文截图 / contain" style={{ flex: 1.4 }}>
+            <MediaFrame
+              src="videos/style-guide/images/tweet.png"
+              alt="Daniel Kokotajlo tweet screenshot"
+              aspectRatio="970 / 346"
+              fit="contain"
+              variant="raised"
+              padding="xs"
+              width="100%"
+            />
+          </MediaFigure>
+          <MediaFigure caption="AI 2027 / contain" style={{ flex: 0.8 }}>
+            <MediaFrame
+              src="videos/style-guide/images/ai-2027.webp"
+              alt="AI 2027 cover"
+              aspectRatio="1080 / 1526"
+              fit="contain"
+              objectPosition="center top"
+              variant="screen"
+              padding="xs"
+              width="100%"
+            />
+          </MediaFigure>
+        </Stack>
+      }
+    />
+  </GuidePage>
 );
 
 const llmTimeline = [
@@ -629,120 +808,157 @@ const modelTableColumns: DataTableColumn<ModelCapabilityRow>[] = [
 ];
 
 const LlmTimelineChartSlide = () => (
-  <Stack style={{ height: "100%" }}>
-    <Rule style={slideRuleStyle} />
-    <Stack direction="row" gap="xl" align="stretch" style={{ flex: 1 }}>
-      <Stack gap="lg" style={{ width: 560 }}>
-        <SectionText
-          eyebrow="图表系统 / Charts"
-          title="折线图适合讲技术路线的跃迁。"
-          body="这里用演示指数表达 LLM 从架构突破到产品化、工具化的节奏。真实项目里可以替换成 benchmark、用户数或收入。"
-        />
-        <Stack gap="sm">
-          <BodyText size="caption">
-            milestone：标出转折点，而不是堆满标签。
-          </BodyText>
-          <BodyText size="caption">area reveal：用淡色面积承托趋势。</BodyText>
-          <BodyText size="caption">
-            demo index：示例指数，不代表精确统计。
-          </BodyText>
+  <GuidePage
+    section="图表系统 / Line Chart"
+    index="06 / 12"
+    subtitle="折线揭示趋势，里程碑只标记真正改变叙事方向的节点。"
+    meta="charts / timeline / demo index"
+  >
+    <ContentLayout
+      variant="split"
+      ratio="1:2"
+      primary={
+        <Stack gap="lg">
+          <PageIntro
+            eyebrow="图表系统 / Charts"
+            title="折线图适合讲技术路线的跃迁。"
+            body="这里用演示指数表达 LLM 从架构突破到产品化、工具化的节奏。真实项目里可以替换成 benchmark、用户数或收入。"
+            size="subtitle"
+          />
+          <Stack gap="sm">
+            <BodyText size="caption">
+              milestone：标出转折点，而不是堆满标签。
+            </BodyText>
+            <BodyText size="caption">
+              area reveal：用淡色面积承托趋势。
+            </BodyText>
+            <BodyText size="caption">
+              demo index：示例指数，不代表精确统计。
+            </BodyText>
+          </Stack>
         </Stack>
-      </Stack>
-      <ChartFrame
-        title="大语言模型发展节奏"
-        caption="LineChart / LLM timeline / demo index"
-        style={{ flex: 1, minWidth: 0 }}
-      >
-        <LineChart
-          data={llmTimeline}
-          minValue={0}
-          maxValue={100}
-          from={12}
-          duration={86}
-          unit=""
-          showValueLabels
-          milestones={llmMilestones}
-          width={920}
-          height={520}
-        />
-      </ChartFrame>
-    </Stack>
-  </Stack>
+      }
+      secondary={
+        <ChartFrame
+          title="大语言模型发展节奏"
+          caption="LineChart / LLM timeline / demo index"
+          style={{ height: "100%", minWidth: 0 }}
+        >
+          <LineChart
+            data={llmTimeline}
+            minValue={0}
+            maxValue={100}
+            from={12}
+            duration={86}
+            unit=""
+            showValueLabels
+            milestones={llmMilestones}
+            width={920}
+            height={520}
+          />
+        </ChartFrame>
+      }
+    />
+  </GuidePage>
 );
 
 const RacingBarChartSlide = () => (
-  <Stack style={{ height: "100%" }}>
-    <Rule style={slideRuleStyle} />
-    <Stack direction="row" gap="xl" align="stretch" style={{ flex: 1 }}>
-      <Stack gap="lg" style={{ width: 520 }}>
-        <SectionText
-          eyebrow="动态排名 / Racing Bar"
-          title="动态条形图适合讲排名变化。"
-          body="UP 主常用它展示语言、城市、产品、模型的长期变化。关键不是柱子会动，而是排名、数值和年份同步变化。"
-        />
-        <Stack gap="sm">
-          <BodyText size="caption">position：排名位置连续插值。</BodyText>
-          <BodyText size="caption">value：柱子长度和数值同步变化。</BodyText>
-          <BodyText size="caption">footer：年份和说明放进独立文本区。</BodyText>
+  <GuidePage
+    section="图表系统 / Racing Bar"
+    index="07 / 12"
+    subtitle="排名位置、数值和年份同时连续插值，底部文字区不会再与图形争抢空间。"
+    meta="charts / ranking / demo snapshots"
+  >
+    <ContentLayout
+      variant="split"
+      ratio="1:2"
+      primary={
+        <Stack gap="lg">
+          <PageIntro
+            eyebrow="动态排名 / Racing Bar"
+            title="动态条形图适合讲排名变化。"
+            body="UP 主常用它展示语言、城市、产品、模型的长期变化。关键不是柱子会动，而是排名、数值和年份同步变化。"
+            size="subtitle"
+          />
+          <Stack gap="sm">
+            <BodyText size="caption">position：排名位置连续插值。</BodyText>
+            <BodyText size="caption">value：柱子长度和数值同步变化。</BodyText>
+            <BodyText size="caption">
+              footer：年份和说明放进独立文本区。
+            </BodyText>
+          </Stack>
         </Stack>
-      </Stack>
-      <ChartFrame
-        title="编程语言欢迎度变化"
-        caption="RacingBarChart / popularity index / demo data"
-        style={{ flex: 1, minWidth: 0 }}
-      >
-        <RacingBarChart
-          snapshots={languageSnapshots}
-          from={12}
-          duration={168}
-          unit=""
-          visibleCount={6}
-          maxValue={100}
-          footerText="timeline / demo snapshots"
-          width={920}
-          height={540}
-        />
-      </ChartFrame>
-    </Stack>
-  </Stack>
+      }
+      secondary={
+        <ChartFrame
+          title="编程语言欢迎度变化"
+          caption="RacingBarChart / popularity index / demo data"
+          style={{ height: "100%", minWidth: 0 }}
+        >
+          <RacingBarChart
+            snapshots={languageSnapshots}
+            from={12}
+            duration={168}
+            unit=""
+            visibleCount={6}
+            maxValue={100}
+            footerText="timeline / demo snapshots"
+            width={920}
+            height={540}
+          />
+        </ChartFrame>
+      }
+    />
+  </GuidePage>
 );
 
 const TableSystemSlide = () => (
-  <Stack style={{ height: "100%" }}>
-    <Rule style={slideRuleStyle} />
-    <Stack direction="row" gap="xl" align="stretch" style={{ flex: 1 }}>
-      <Stack gap="lg" style={{ width: 540 }}>
-        <SectionText
-          eyebrow="表格系统 / DataTable"
-          title="表格适合承载密集但有秩序的信息。"
-          body="它不是网页表格搬运，而是视频里的 ledger：列宽固定、状态明确、每行逐帧进入，观众能快速扫到结论。"
-        />
-        <Stack gap="sm">
-          <BodyText size="caption">column：先定义宽度、对齐和强调。</BodyText>
-          <BodyText size="caption">cell：状态色只用于小标记。</BodyText>
-          <BodyText size="caption">
-            row reveal：逐行进入，不靠 CSS 动画。
-          </BodyText>
+  <GuidePage
+    section="表格系统 / DataTable"
+    index="08 / 12"
+    subtitle="列宽、状态与逐行进入遵循固定规则，观众可以快速扫到结论。"
+    meta="tables / model capability ledger"
+  >
+    <ContentLayout
+      variant="split"
+      ratio="1:2"
+      primary={
+        <Stack gap="lg">
+          <PageIntro
+            eyebrow="表格系统 / DataTable"
+            title="表格适合承载密集但有秩序的信息。"
+            body="它不是网页表格搬运，而是视频里的 ledger：列宽固定、状态明确、每行逐帧进入，观众能快速扫到结论。"
+            size="subtitle"
+          />
+          <Stack gap="sm">
+            <BodyText size="caption">column：先定义宽度、对齐和强调。</BodyText>
+            <BodyText size="caption">cell：状态色只用于小标记。</BodyText>
+            <BodyText size="caption">
+              row reveal：逐行进入，不靠 CSS 动画。
+            </BodyText>
+          </Stack>
         </Stack>
-      </Stack>
-      <Stack justify="center" style={{ flex: 1, minWidth: 0 }}>
-        <DataTable
-          columns={modelTableColumns}
-          rows={modelCapabilityRows}
-          rowKey={(row) => row.model}
-          highlightRows={[1, 4]}
-          from={10}
-          revealStagger={4}
-          footer={
-            <>
-              <span>demo data / 用于模板演示</span>
-              <span>status: observation ledger</span>
-            </>
-          }
-        />
-      </Stack>
-    </Stack>
-  </Stack>
+      }
+      secondary={
+        <Stack justify="center" style={{ height: "100%", minWidth: 0 }}>
+          <DataTable
+            columns={modelTableColumns}
+            rows={modelCapabilityRows}
+            rowKey={(row) => row.model}
+            highlightRows={[1, 4]}
+            from={10}
+            revealStagger={4}
+            footer={
+              <>
+                <span>demo data / 用于模板演示</span>
+                <span>status: observation ledger</span>
+              </>
+            }
+          />
+        </Stack>
+      }
+    />
+  </GuidePage>
 );
 
 const MotionStrip = () => {
@@ -808,104 +1024,127 @@ const MotionStrip = () => {
 };
 
 const CodeMotionSlide = () => (
-  <Stack style={{ height: "100%" }}>
-    <Rule style={slideRuleStyle} />
-    <Stack direction="row" gap="xl" align="stretch" style={{ flex: 1 }}>
-      <Stack gap="lg" style={{ width: 610 }}>
-        <SectionText
-          eyebrow="代码与动效 / Code + Motion"
-          title="代码和动效也要服从叙事。"
-          body="CodeFrame 先离线高亮，再在时间线上做 focus。动效只用 useCurrentFrame、interpolate 和固定 easing。"
+  <GuidePage
+    section="代码与动效 / Code + Motion"
+    index="09 / 12"
+    subtitle="代码先离线高亮，再按当前帧聚焦；命令行样式只在真正的代码语境中出现。"
+    meta="code / deterministic focus"
+  >
+    <ContentLayout
+      variant="split"
+      ratio="2:3"
+      primary={
+        <Stack gap="lg">
+          <PageIntro
+            eyebrow="代码与动效 / Code + Motion"
+            title="代码和动效也要服从叙事。"
+            body="CodeFrame 先离线高亮，再在时间线上做 focus。动效只用 useCurrentFrame、interpolate 和固定 easing。"
+            size="subtitle"
+          />
+          <MotionStrip />
+        </Stack>
+      }
+      secondary={
+        <CodeFrame
+          code={highlightedCode}
+          filename="WelcomeScene.tsx"
+          focusSteps={[
+            { lines: "2-7", from: 16 },
+            { lines: "9-13", from: 62 },
+          ]}
+          focusDuration={theme.motion.duration.enter}
+          revealFrom={0}
+          revealStagger={theme.code.revealStagger}
+          style={{ height: "100%", minHeight: 0 }}
         />
-        <MotionStrip />
-      </Stack>
-      <CodeFrame
-        code={highlightedCode}
-        filename="WelcomeScene.tsx"
-        focusSteps={[
-          { lines: "2-7", from: 16 },
-          { lines: "9-13", from: 62 },
-        ]}
-        focusDuration={theme.motion.duration.enter}
-        revealFrom={0}
-        revealStagger={theme.code.revealStagger}
-        style={{ flex: 1, minHeight: 0 }}
-      />
-    </Stack>
-  </Stack>
+      }
+    />
+  </GuidePage>
 );
 
 type StorySlideProps = {
+  section: string;
+  index: string;
+  subtitle: ReactNode;
   eyebrow: string;
   title: ReactNode;
   body?: ReactNode;
   quote?: ReactNode;
   media: ReactNode;
-  mediaFlex?: number;
-  copyFlex?: number;
+  ratio?: "1:1" | "2:3" | "3:2" | "1:2" | "2:1";
 };
 
 const StorySlide = ({
+  section,
+  index,
+  subtitle,
   eyebrow,
   title,
   body,
   quote,
   media,
-  mediaFlex = 1,
-  copyFlex = 1,
+  ratio = "1:1",
 }: StorySlideProps) => (
-  <Stack style={{ height: "100%" }}>
-    <Rule style={slideRuleStyle} />
-    <Stack
-      direction="row"
-      gap="xl"
+  <GuidePage
+    section={section}
+    index={index}
+    subtitle={subtitle}
+    meta="narrative / media evidence"
+  >
+    <ContentLayout
+      variant="split"
+      ratio={ratio}
       align="center"
-      style={{ flex: 1, minHeight: 0 }}
-    >
-      <FadeIn from={0} y={18} style={{ flex: copyFlex, minWidth: 0 }}>
-        <Stack gap="md">
-          <Eyebrow>{eyebrow}</Eyebrow>
-          <Title size="subtitle" maxWidth={760}>
-            {title}
-          </Title>
-          {body ? (
-            <BodyText maxWidth={760} size="caption">
-              {body}
-            </BodyText>
-          ) : null}
-          {quote ? (
-            <div
-              style={{
-                maxWidth: 820,
-                borderLeft: `${theme.stroke.strong}px solid ${theme.colors.primary}`,
-                paddingLeft: theme.space.md,
-              }}
-            >
-              <BodyText maxWidth={760} size="caption">
-                {quote}
-              </BodyText>
-            </div>
-          ) : null}
-        </Stack>
-      </FadeIn>
-      <FadeIn
-        from={8}
-        y={18}
-        style={{
-          flex: mediaFlex,
-          minWidth: 0,
-          display: "flex",
-          justifyContent: "center",
-        }}
-      >
-        {media}
-      </FadeIn>
-    </Stack>
-  </Stack>
+      primary={
+        <FadeIn from={0} y={18}>
+          <Stack gap="md">
+            <PageIntro
+              eyebrow={eyebrow}
+              title={title}
+              body={body}
+              size="subtitle"
+              maxWidth={760}
+            />
+            {quote ? (
+              <div
+                style={{
+                  maxWidth: 820,
+                  borderLeft: `${theme.stroke.strong}px solid ${theme.colors.primary}`,
+                  paddingLeft: theme.space.md,
+                }}
+              >
+                <BodyText maxWidth={760} size="caption">
+                  {quote}
+                </BodyText>
+              </div>
+            ) : null}
+          </Stack>
+        </FadeIn>
+      }
+      secondary={
+        <FadeIn
+          from={8}
+          y={18}
+          style={{
+            height: "100%",
+            minWidth: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          {media}
+        </FadeIn>
+      }
+    />
+  </GuidePage>
 );
 
 const TweetStory = () => (
   <StorySlide
+    section="叙事示例 / Source"
+    index="10 / 12"
+    subtitle="他们给出的不是更乐观的预测，而是一条主动选择的路径。"
     eyebrow="01 / 来源"
     title="Daniel Kokotajlo 是这么介绍的："
     quote={
@@ -934,13 +1173,15 @@ const TweetStory = () => (
         />
       </MediaFigure>
     }
-    copyFlex={0.8}
-    mediaFlex={1.2}
+    ratio="2:3"
   />
 );
 
 const Ai2027Story = () => (
   <StorySlide
+    section="叙事示例 / Context"
+    index="11 / 12"
+    subtitle="理解 Plan A 之前，需要先理解《AI 2027》给出的风险基线。"
     eyebrow="02 / 背景"
     title="如果你没读过《AI 2027》，这里补个课。"
     body="它不是新闻摘要，而是一份按时间推进的未来场景：从模型能力、组织竞争，到 governance 失效的连锁反应。"
@@ -958,13 +1199,15 @@ const Ai2027Story = () => (
         />
       </MediaFigure>
     }
-    copyFlex={0.75}
-    mediaFlex={1.25}
+    ratio="2:3"
   />
 );
 
 const ForecastProcessStory = () => (
   <StorySlide
+    section="叙事示例 / Timeline"
+    index="12 / 12"
+    subtitle="逐月推演把抽象风险变成一条可以检查、质疑和讨论的时间线。"
     eyebrow="03 / 推演"
     title="2025 年 4 月，他们发布了一份逐月推演的 AI 未来场景。"
     body="参与者包括 Daniel Kokotajlo、Scott Alexander、Eli Lifland、Thomas Larsen 和 Romeo Dean。"
@@ -991,85 +1234,58 @@ const ForecastProcessStory = () => (
         </MediaFrame>
       </MediaFigure>
     }
-    copyFlex={0.95}
-    mediaFlex={1.05}
+    ratio="1:1"
   />
 );
 
 export const StyleGuide = ({ headline, caption }: StyleGuideProps) => (
-  <Scene>
-    <SafeArea>
-      <Sequence durationInFrames={coverDuration} layout="none">
-        <CoverSlide headline={headline} caption={caption} />
-      </Sequence>
-      <Sequence from={typeStart} durationInFrames={typeDuration} layout="none">
-        <TypographySlide />
-      </Sequence>
-      <Sequence
-        from={textMotionStart}
-        durationInFrames={textMotionDuration}
-        layout="none"
-      >
-        <TextMotionSlide />
-      </Sequence>
-      <Sequence
-        from={mediaStart}
-        durationInFrames={mediaDuration}
-        layout="none"
-      >
-        <MediaSystemSlide />
-      </Sequence>
-      <Sequence
-        from={chartLineStart}
-        durationInFrames={chartLineDuration}
-        layout="none"
-      >
-        <LlmTimelineChartSlide />
-      </Sequence>
-      <Sequence
-        from={chartRaceStart}
-        durationInFrames={chartRaceDuration}
-        layout="none"
-      >
-        <RacingBarChartSlide />
-      </Sequence>
-      <Sequence
-        from={tableStart}
-        durationInFrames={tableDuration}
-        layout="none"
-      >
-        <TableSystemSlide />
-      </Sequence>
-      <Sequence
-        from={codeMotionStart}
-        durationInFrames={codeMotionDuration}
-        layout="none"
-      >
-        <CodeMotionSlide />
-      </Sequence>
-      <Sequence
-        from={narrativeStart}
-        durationInFrames={storyDuration}
-        layout="none"
-      >
-        <TweetStory />
-      </Sequence>
-      <Sequence
-        from={narrativeStart + storyDuration}
-        durationInFrames={storyDuration}
-        layout="none"
-      >
-        <Ai2027Story />
-      </Sequence>
-      <Sequence
-        from={narrativeStart + storyDuration * 2}
-        durationInFrames={storyDuration}
-        layout="none"
-      >
-        <ForecastProcessStory />
-      </Sequence>
-    </SafeArea>
-  </Scene>
+  <>
+    <Sequence durationInFrames={coverDuration}>
+      <CoverSlide headline={headline} caption={caption} />
+    </Sequence>
+    <Sequence from={sectionStart} durationInFrames={sectionDuration}>
+      <SectionTransitionSlide />
+    </Sequence>
+    <Sequence from={layoutStart} durationInFrames={layoutDuration}>
+      <LayoutSystemSlide />
+    </Sequence>
+    <Sequence from={typeStart} durationInFrames={typeDuration}>
+      <TypographySlide />
+    </Sequence>
+    <Sequence from={textMotionStart} durationInFrames={textMotionDuration}>
+      <TextMotionSlide />
+    </Sequence>
+    <Sequence from={mediaStart} durationInFrames={mediaDuration}>
+      <MediaSystemSlide />
+    </Sequence>
+    <Sequence from={chartLineStart} durationInFrames={chartLineDuration}>
+      <LlmTimelineChartSlide />
+    </Sequence>
+    <Sequence from={chartRaceStart} durationInFrames={chartRaceDuration}>
+      <RacingBarChartSlide />
+    </Sequence>
+    <Sequence from={tableStart} durationInFrames={tableDuration}>
+      <TableSystemSlide />
+    </Sequence>
+    <Sequence from={codeMotionStart} durationInFrames={codeMotionDuration}>
+      <CodeMotionSlide />
+    </Sequence>
+    <Sequence from={narrativeStart} durationInFrames={storyDuration}>
+      <TweetStory />
+    </Sequence>
+    <Sequence
+      from={narrativeStart + storyDuration}
+      durationInFrames={storyDuration}
+    >
+      <Ai2027Story />
+    </Sequence>
+    <Sequence
+      from={narrativeStart + storyDuration * 2}
+      durationInFrames={storyDuration}
+    >
+      <ForecastProcessStory />
+    </Sequence>
+  </>
 );
 
 export const StyleGuideComposition = () => (

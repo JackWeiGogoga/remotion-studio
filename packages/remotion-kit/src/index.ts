@@ -66,3 +66,25 @@ export type {
   RevealTextPreset,
   RevealTextProps,
 } from "./text-effects";
+export {
+  ContentLayout,
+  CoverPage,
+  PageFooter,
+  PageHeader,
+  PageIntro,
+  PageLayout,
+  PageSubtitle,
+  SectionPage,
+} from "./layouts";
+export type {
+  ContentLayoutProps,
+  ContentLayoutRatio,
+  ContentLayoutVariant,
+  CoverPageProps,
+  PageFooterContent,
+  PageHeaderContent,
+  PageIntroProps,
+  PageLayoutProps,
+  PageSubtitleProps,
+  SectionPageProps,
+} from "./layouts";

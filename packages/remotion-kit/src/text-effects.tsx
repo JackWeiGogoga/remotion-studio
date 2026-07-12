@@ -214,6 +214,7 @@ export type KineticTitleProps = {
   maxWidth?: number | string;
   align?: "left" | "center" | "right";
   eyebrowMarker?: boolean;
+  tone?: "paper" | "inverse";
   style?: CSSProperties;
   titleStyle?: CSSProperties;
   captionStyle?: CSSProperties;
@@ -232,10 +233,13 @@ export const KineticTitle = ({
   maxWidth = 1120,
   align = "left",
   eyebrowMarker = true,
+  tone = "paper",
   style,
   titleStyle,
   captionStyle,
 }: KineticTitleProps) => {
+  const textTone = tone === "inverse" ? "inverse" : "ink";
+  const supportingTone = tone === "inverse" ? "inverse" : "muted";
   const alignItems =
     align === "center"
       ? "center"
@@ -254,10 +258,18 @@ export const KineticTitle = ({
     >
       {eyebrow ? (
         <FadeIn from={from} y={10}>
-          <Eyebrow marker={eyebrowMarker}>{eyebrow}</Eyebrow>
+          <Eyebrow marker={eyebrowMarker} tone={supportingTone}>
+            {eyebrow}
+          </Eyebrow>
         </FadeIn>
       ) : null}
-      <Title size={size} maxWidth={maxWidth} align={align} style={titleStyle}>
+      <Title
+        size={size}
+        maxWidth={maxWidth}
+        align={align}
+        tone={textTone}
+        style={titleStyle}
+      >
         <RevealText
           text={title}
           by={by}
@@ -269,7 +281,12 @@ export const KineticTitle = ({
       </Title>
       {caption ? (
         <FadeIn from={from + 14} y={12}>
-          <Caption maxWidth={maxWidth} align={align} style={captionStyle}>
+          <Caption
+            maxWidth={maxWidth}
+            align={align}
+            tone={supportingTone}
+            style={captionStyle}
+          >
             {caption}
           </Caption>
         </FadeIn>

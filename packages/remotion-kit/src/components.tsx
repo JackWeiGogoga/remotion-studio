@@ -97,6 +97,7 @@ export const SafeArea = ({
   return (
     <AbsoluteFill
       style={{
+        boxSizing: "border-box",
         padding: `${inset.y}px ${inset.x}px`,
         ...style,
       }}
