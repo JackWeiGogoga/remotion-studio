@@ -525,9 +525,20 @@ export const MediaFigure = ({
   const resolvedAspectRatio = resolveAspectRatio(aspectRatio);
   const ratio = getAspectRatioNumber(resolvedAspectRatio);
   const resolvedFitAxis = fitAxis ?? (ratio > 1 ? "width" : "height");
+  const isWidthFit = resolvedFitAxis === "width";
   const shadowReserve =
     variant === "raised" || variant === "screen" ? theme.space.xs : 0;
 
+  // The figure is a flex column of [media, caption]. The caption track is
+  // `flex: 0 0 auto`, so it always reserves its own height and can never be
+  // clipped by the page's bottom region. The media wrapper decides how the
+  // remaining space is used:
+  //  - height-fit: `flex: 1 1 auto` so the media fills the space; the frame is
+  //    `height: 100%` and therefore its bottom edge sits right above the caption.
+  //  - width-fit: `flex: 0 1 auto` so the wrapper shrinks to the media's own
+  //    (width-derived) height; the whole media+caption group is centered as a
+  //    unit, keeping the caption hugging the image instead of dropping to the
+  //    bottom of a tall track.
   return (
     <div
       style={{
@@ -538,8 +549,9 @@ export const MediaFigure = ({
         maxHeight: "100%",
         minWidth: 0,
         minHeight: 0,
-        display: "grid",
-        gridTemplateRows: "minmax(0, 1fr) auto",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: isWidthFit ? "center" : "flex-start",
         rowGap:
           typeof captionGap === "number" ? captionGap : theme.space[captionGap],
         ...style,
@@ -549,10 +561,12 @@ export const MediaFigure = ({
         style={{
           boxSizing: "border-box",
           width: "100%",
+          flex: isWidthFit ? "0 1 auto" : "1 1 auto",
           minWidth: 0,
           minHeight: 0,
-          display: "grid",
-          placeItems: "center",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           overflow: "hidden",
           paddingRight: shadowReserve,
           paddingBottom: shadowReserve,
@@ -562,8 +576,8 @@ export const MediaFigure = ({
           {...mediaFrameProps}
           aspectRatio={resolvedAspectRatio}
           variant={variant}
-          width={resolvedFitAxis === "width" ? "100%" : "auto"}
-          height={resolvedFitAxis === "height" ? "100%" : "auto"}
+          width={isWidthFit ? "100%" : "auto"}
+          height={isWidthFit ? "auto" : "100%"}
           style={{
             maxWidth: "100%",
             maxHeight: "100%",
@@ -575,7 +589,7 @@ export const MediaFigure = ({
         size="label"
         align={captionAlign}
         maxWidth="100%"
-        style={{ width: "100%" }}
+        style={{ flex: "0 0 auto", width: "100%" }}
       >
         {caption}
       </Caption>
