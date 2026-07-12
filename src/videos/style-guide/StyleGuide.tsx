@@ -121,17 +121,15 @@ const GuidePage = ({
   section,
   index,
   subtitle,
-  meta = "remotion-kit / layout system",
 }: {
   children: ReactNode;
   section: ReactNode;
   index: ReactNode;
   subtitle?: ReactNode;
-  meta?: ReactNode;
 }) => (
   <PageLayout
     header={{ brand: guideBrand, section, index }}
-    footer={{ subtitle, meta, page: index }}
+    footer={{ subtitle }}
   >
     {children}
   </PageLayout>
@@ -181,7 +179,7 @@ const CoverLayoutDiagram = () => (
         paddingTop: theme.space.xs,
       }}
     >
-      SUBTITLE / META
+      SUBTITLE
     </div>
   </div>
 );
@@ -219,7 +217,6 @@ const SectionTransitionSlide = () => (
     index="01 / 12"
     title={"页面先统一\n组件才有意义"}
     subtitle="SectionPage / 章节切换 / deterministic text reveal"
-    meta="chapter transition / inverse"
   />
 );
 
@@ -286,9 +283,9 @@ const LayoutSystemSlide = () => (
       primary={
         <Stack gap="lg">
           <PageIntro
-            eyebrow="页面骨架 / PageLayout"
+            eyebrow="布局原则 / Structure"
             title="先固定页面，再组织内容。"
-            body="普通页面统一顶部导航、内容起点、底部字幕和元信息。封面与章节页是明确变体，因此差异是有意的。"
+            body="普通页面统一顶部导航、内容起点和底部字幕槽位。封面与章节页是明确变体，因此差异是有意的。"
           />
           <Stack gap="sm">
             <BodyText size="caption">split：图文、讲解与证据。</BodyText>
@@ -347,7 +344,7 @@ const TypeScalePanel = () => (
       boxSizing: "border-box",
       borderTop: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
       borderBottom: `${theme.stroke.hairline}px solid ${theme.colors.hairline}`,
-      padding: `${theme.space.xl}px ${theme.space.lg}px ${theme.space.lg}px`,
+      padding: `${theme.space.lg}px ${theme.space.lg}px ${theme.space.md}px`,
       display: "flex",
     }}
   >
@@ -426,11 +423,12 @@ const TypographySlide = () => (
       variant="split"
       ratio="2:3"
       primary={
-        <Stack gap="xl">
+        <Stack gap="lg">
           <PageIntro
-            eyebrow="文字系统 / Typography"
+            eyebrow="排版原则 / Hierarchy"
             title="标题先建立层级，再谈装饰。"
             body="中文视频最常见的问题不是字体不酷，而是标题、小标题、正文抢同一个位置。模板默认把它们分成三层。"
+            size="subtitle"
           />
           <ColorBoard />
         </Stack>
@@ -452,7 +450,7 @@ const TextMotionSlide = () => (
       primary={
         <Stack gap="lg">
           <PageIntro
-            eyebrow="文字动效 / Text Motion"
+            eyebrow="动效原则 / Reveal"
             title="逐字出现适合转场，不适合长段落。"
             body="RevealText 负责可组合的拆字、拆词、拆行；KineticTitle 负责章节标题。所有动画都由当前帧驱动。"
           />
@@ -532,7 +530,7 @@ const MediaSystemSlide = () => (
       primary={
         <Stack gap="lg">
           <PageIntro
-            eyebrow="媒体系统 / Media"
+            eyebrow="素材规则 / Evidence"
             title="图片是证据，不是背景装饰。"
             body="截图、封面、长图和动图都进入稳定容器。标签不压在图片上，来源和说明放在图注里。"
           />
@@ -812,7 +810,6 @@ const LlmTimelineChartSlide = () => (
     section="图表系统 / Line Chart"
     index="06 / 12"
     subtitle="折线揭示趋势，里程碑只标记真正改变叙事方向的节点。"
-    meta="charts / timeline / demo index"
   >
     <ContentLayout
       variant="split"
@@ -820,7 +817,7 @@ const LlmTimelineChartSlide = () => (
       primary={
         <Stack gap="lg">
           <PageIntro
-            eyebrow="图表系统 / Charts"
+            eyebrow="趋势叙事 / Timeline"
             title="折线图适合讲技术路线的跃迁。"
             body="这里用演示指数表达 LLM 从架构突破到产品化、工具化的节奏。真实项目里可以替换成 benchmark、用户数或收入。"
             size="subtitle"
@@ -867,7 +864,6 @@ const RacingBarChartSlide = () => (
     section="图表系统 / Racing Bar"
     index="07 / 12"
     subtitle="排名位置、数值和年份同时连续插值，底部文字区不会再与图形争抢空间。"
-    meta="charts / ranking / demo snapshots"
   >
     <ContentLayout
       variant="split"
@@ -875,7 +871,7 @@ const RacingBarChartSlide = () => (
       primary={
         <Stack gap="lg">
           <PageIntro
-            eyebrow="动态排名 / Racing Bar"
+            eyebrow="排名叙事 / Ranking"
             title="动态条形图适合讲排名变化。"
             body="UP 主常用它展示语言、城市、产品、模型的长期变化。关键不是柱子会动，而是排名、数值和年份同步变化。"
             size="subtitle"
@@ -917,7 +913,6 @@ const TableSystemSlide = () => (
     section="表格系统 / DataTable"
     index="08 / 12"
     subtitle="列宽、状态与逐行进入遵循固定规则，观众可以快速扫到结论。"
-    meta="tables / model capability ledger"
   >
     <ContentLayout
       variant="split"
@@ -925,7 +920,7 @@ const TableSystemSlide = () => (
       primary={
         <Stack gap="lg">
           <PageIntro
-            eyebrow="表格系统 / DataTable"
+            eyebrow="信息密度 / Ledger"
             title="表格适合承载密集但有秩序的信息。"
             body="它不是网页表格搬运，而是视频里的 ledger：列宽固定、状态明确、每行逐帧进入，观众能快速扫到结论。"
             size="subtitle"
@@ -1028,7 +1023,6 @@ const CodeMotionSlide = () => (
     section="代码与动效 / Code + Motion"
     index="09 / 12"
     subtitle="代码先离线高亮，再按当前帧聚焦；命令行样式只在真正的代码语境中出现。"
-    meta="code / deterministic focus"
   >
     <ContentLayout
       variant="split"
@@ -1036,7 +1030,7 @@ const CodeMotionSlide = () => (
       primary={
         <Stack gap="lg">
           <PageIntro
-            eyebrow="代码与动效 / Code + Motion"
+            eyebrow="代码讲解 / Walkthrough"
             title="代码和动效也要服从叙事。"
             body="CodeFrame 先离线高亮，再在时间线上做 focus。动效只用 useCurrentFrame、interpolate 和固定 easing。"
             size="subtitle"
@@ -1085,12 +1079,7 @@ const StorySlide = ({
   media,
   ratio = "1:1",
 }: StorySlideProps) => (
-  <GuidePage
-    section={section}
-    index={index}
-    subtitle={subtitle}
-    meta="narrative / media evidence"
-  >
+  <GuidePage section={section} index={index} subtitle={subtitle}>
     <ContentLayout
       variant="split"
       ratio={ratio}

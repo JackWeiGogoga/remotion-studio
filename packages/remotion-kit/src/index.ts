@@ -13,7 +13,11 @@ export {
   Title,
   useProgressiveReveal,
 } from "./components";
-export type { MediaFrameProps, MediaFrameVariant } from "./components";
+export type {
+  EyebrowMarker,
+  MediaFrameProps,
+  MediaFrameVariant,
+} from "./components";
 export {
   after,
   exitProgress,

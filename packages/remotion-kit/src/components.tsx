@@ -174,42 +174,50 @@ export const Title = ({
   </div>
 );
 
+export type EyebrowMarker = boolean | "bar" | "none";
+
 export const Eyebrow = ({
   children,
   tone = "muted",
-  marker = true,
+  marker = "bar",
   style,
 }: PropsWithChildren<{
   tone?: TextTone;
-  marker?: boolean;
+  marker?: EyebrowMarker;
   style?: CSSProperties;
-}>) => (
-  <div
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      gap: theme.space.xs,
-      color: resolveTextColor(tone),
-      fontSize: theme.typography.size.label,
-      fontWeight: theme.typography.weight.regular,
-      lineHeight: 1,
-      letterSpacing: 0,
-      ...style,
-    }}
-  >
-    {marker ? (
-      <span
-        style={{
-          width: 32,
-          height: theme.stroke.strong,
-          background: theme.colors.primary,
-          flex: "0 0 auto",
-        }}
-      />
-    ) : null}
-    <span>{children}</span>
-  </div>
-);
+}>) => {
+  const resolvedMarker =
+    marker === true ? "bar" : marker === false ? "none" : marker;
+
+  return (
+    <div
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        gap: theme.space.xs,
+        color: resolveTextColor(tone),
+        fontSize: theme.typography.size.label,
+        fontWeight: theme.typography.weight.medium,
+        lineHeight: 1.2,
+        letterSpacing: 0,
+        ...style,
+      }}
+    >
+      {resolvedMarker === "bar" ? (
+        <span
+          style={{
+            width: theme.typography.eyebrow.markerWidth,
+            height: theme.typography.eyebrow.markerHeight,
+            borderRadius: theme.typography.eyebrow.markerRadius,
+            background: theme.colors.primary,
+            flex: "0 0 auto",
+          }}
+        />
+      ) : null}
+      <span>{children}</span>
+    </div>
+  );
+};
 
 export const BodyText = ({
   children,

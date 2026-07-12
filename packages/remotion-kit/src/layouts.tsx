@@ -23,8 +23,6 @@ export type PageHeaderContent = {
 
 export type PageFooterContent = {
   subtitle?: ReactNode;
-  meta?: ReactNode;
-  page?: ReactNode;
 };
 
 export type PageLayoutProps = PropsWithChildren<{
@@ -102,39 +100,25 @@ export const PageHeader = ({
 
 export const PageFooter = ({
   subtitle,
-  meta,
-  page,
   tone = "paper",
 }: PageFooterContent & { tone?: LayoutTone }) => {
   const colors = chromeColors(tone);
+  const { width, height } = useVideoConfig();
+  const format = getCanvasFormat(width, height);
 
   return (
     <div
       style={{
-        height: theme.layout.footerHeight,
+        height: theme.layout.footerHeight[format],
         boxSizing: "border-box",
-        display: "grid",
-        gridTemplateRows: `minmax(0, 1fr) ${theme.layout.footerMetaHeight}px`,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
         borderTop: `${theme.stroke.hairline}px solid ${colors.rule}`,
+        padding: `${theme.layout.footerPadding.top}px 0 ${theme.layout.footerPadding.bottom}px`,
       }}
     >
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: 0,
-          overflow: "hidden",
-        }}
-      >
-        {subtitle ? <PageSubtitle tone={tone}>{subtitle}</PageSubtitle> : null}
-      </div>
-      <Stack direction="row" align="center" justify="space-between">
-        <ChromeText tone={tone}>{meta}</ChromeText>
-        <ChromeText tone={tone} align="right">
-          {page}
-        </ChromeText>
-      </Stack>
+      {subtitle ? <PageSubtitle tone={tone}>{subtitle}</PageSubtitle> : null}
     </div>
   );
 };
@@ -148,38 +132,43 @@ export const PageSubtitle = ({
   children,
   tone = "paper",
   style,
-}: PageSubtitleProps) => (
-  <div
-    style={{
-      maxWidth: theme.layout.subtitle.maxWidth,
-      boxSizing: "border-box",
-      display: "inline-flex",
-      alignItems: "center",
-      justifyContent: "center",
-      background: tone === "inverse" ? theme.colors.canvas : theme.colors.ink,
-      color: tone === "inverse" ? theme.colors.ink : theme.colors.canvas,
-      borderRadius: theme.layout.subtitle.radius,
-      padding: `${theme.layout.subtitle.paddingY}px ${theme.layout.subtitle.paddingX}px`,
-      fontSize: theme.typography.size.caption,
-      fontWeight: theme.typography.weight.medium,
-      lineHeight: theme.layout.subtitle.lineHeight,
-      textAlign: "center",
-      textWrap: "balance",
-      ...style,
-    }}
-  >
-    <span
+}: PageSubtitleProps) => {
+  const { width, height } = useVideoConfig();
+  const format = getCanvasFormat(width, height);
+
+  return (
+    <div
       style={{
-        display: "-webkit-box",
-        WebkitBoxOrient: "vertical",
-        WebkitLineClamp: theme.layout.subtitle.maxLines,
-        overflow: "hidden",
+        maxWidth: theme.layout.subtitle.maxWidth,
+        boxSizing: "border-box",
+        display: "inline-flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: tone === "inverse" ? theme.colors.canvas : theme.colors.ink,
+        color: tone === "inverse" ? theme.colors.ink : theme.colors.canvas,
+        borderRadius: theme.layout.subtitle.radius,
+        padding: `${theme.layout.subtitle.paddingY}px ${theme.layout.subtitle.paddingX}px`,
+        fontSize: theme.typography.size.caption,
+        fontWeight: theme.typography.weight.medium,
+        lineHeight: theme.layout.subtitle.lineHeight,
+        textAlign: "center",
+        textWrap: "balance",
+        ...style,
       }}
     >
-      {children}
-    </span>
-  </div>
-);
+      <span
+        style={{
+          display: "-webkit-box",
+          WebkitBoxOrient: "vertical",
+          WebkitLineClamp: theme.layout.subtitle.maxLines[format],
+          overflow: "hidden",
+        }}
+      >
+        {children}
+      </span>
+    </div>
+  );
+};
 
 export const PageLayout = ({
   children,
@@ -188,30 +177,35 @@ export const PageLayout = ({
   tone = "paper",
   contentStyle,
   style,
-}: PageLayoutProps) => (
-  <Scene tone={tone} style={style}>
-    <SafeArea
-      style={{
-        display: "grid",
-        gridTemplateRows: `${theme.layout.headerHeight}px minmax(0, 1fr) ${theme.layout.footerHeight}px`,
-        rowGap: theme.layout.regionGap,
-      }}
-    >
-      <PageHeader {...header} tone={tone} />
-      <main
+}: PageLayoutProps) => {
+  const { width, height } = useVideoConfig();
+  const format = getCanvasFormat(width, height);
+
+  return (
+    <Scene tone={tone} style={style}>
+      <SafeArea
         style={{
-          minWidth: 0,
-          minHeight: 0,
-          overflow: "hidden",
-          ...contentStyle,
+          display: "grid",
+          gridTemplateRows: `${theme.layout.headerHeight}px minmax(0, 1fr) ${theme.layout.footerHeight[format]}px`,
+          rowGap: theme.layout.regionGap[format],
         }}
       >
-        {children}
-      </main>
-      <PageFooter {...footer} tone={tone} />
-    </SafeArea>
-  </Scene>
-);
+        <PageHeader {...header} tone={tone} />
+        <main
+          style={{
+            minWidth: 0,
+            minHeight: 0,
+            overflow: "hidden",
+            ...contentStyle,
+          }}
+        >
+          {children}
+        </main>
+        <PageFooter {...footer} tone={tone} />
+      </SafeArea>
+    </Scene>
+  );
+};
 
 export type ContentLayoutVariant =
   | "full"
@@ -444,6 +438,8 @@ export const CoverPage = ({
   tone = "paper",
 }: CoverPageProps) => {
   const colors = chromeColors(tone);
+  const { width, height } = useVideoConfig();
+  const format = getCanvasFormat(width, height);
 
   return (
     <Scene tone={tone}>
@@ -451,7 +447,7 @@ export const CoverPage = ({
         style={{
           display: "grid",
           gridTemplateRows: `${theme.layout.headerHeight}px minmax(0, 1fr) ${theme.layout.coverFooterHeight}px`,
-          rowGap: theme.layout.regionGap,
+          rowGap: theme.layout.regionGap[format],
         }}
       >
         <PageHeader brand={brand} index={edition} tone={tone} />
@@ -515,7 +511,6 @@ export type SectionPageProps = {
   index?: ReactNode;
   title: string;
   subtitle?: ReactNode;
-  meta?: ReactNode;
   from?: number;
   align?: "left" | "center" | "right";
   tone?: LayoutTone;
@@ -527,16 +522,11 @@ export const SectionPage = ({
   index,
   title,
   subtitle,
-  meta,
   from = 0,
   align = "left",
   tone = "inverse",
 }: SectionPageProps) => (
-  <PageLayout
-    tone={tone}
-    header={{ brand, section, index }}
-    footer={{ meta, page: index }}
-  >
+  <PageLayout tone={tone} header={{ brand, section, index }}>
     <ContentLayout
       variant="focus"
       align="center"

@@ -14,7 +14,7 @@ Landscape is the default for explainers and archive walkthroughs. Portrait is fo
 
 ## Page Layout
 
-Use `PageLayout` for every ordinary content scene. It owns the page chrome and divides the frame into three stable regions: navigation, content, and subtitle/footer. Header height, the single fixed footer height, region gaps, content gaps, and center widths come from `theme.layout`; do not duplicate those values in scene code.
+Use `PageLayout` for every ordinary content scene. It owns the page chrome and divides the frame into three stable regions: navigation, content, and subtitle/footer. Header height, format-specific footer height, region gaps, content gaps, and center widths come from `theme.layout`; do not duplicate those values in scene code.
 
 The navigation region always keeps the same baseline and bottom rule. Use its slots consistently:
 
@@ -22,9 +22,9 @@ The navigation region always keeps the same baseline and bottom rule. Use its sl
 - `section`: current chapter or content type.
 - `index`: stable page or scene position.
 
-The footer always keeps its top rule at one fixed canvas position. Put narration captions in `subtitle`, source or component context in `meta`, and a short page position in `page`. Page authors cannot change the footer height or move its divider. One-line, two-line, and empty subtitle states all preserve the same geometry; this is enforced by the `PageLayout` props rather than by convention.
+The footer always keeps its top rule at one fixed position within a canvas format and contains only narration subtitles. Page authors cannot change the footer height or move its divider. Landscape uses a compact single-line subtitle slot; square and portrait canvases reserve two lines because their text measure is narrower. This behavior is selected from the canvas format, never per page. Do not repeat page numbers, section names, sources, or component metadata in the footer; those belong in the header, figure caption, chart caption, or content itself.
 
-`PageSubtitle` renders narration as a compact centered contrast plate. It is intentionally different from terminal chrome: it has no `$` prompt, filename, or full-width command bar. Keep it to one semantic phrase or at most two short lines. An empty subtitle leaves the reserved region blank without moving content.
+`PageSubtitle` renders narration as a compact centered contrast plate. It is intentionally different from terminal chrome: it has no `$` prompt, filename, or full-width command bar. In landscape, split long narration into timed semantic phrases instead of wrapping it onto a second line. Square and portrait may use at most two short lines. An empty subtitle leaves the reserved region blank without moving content.
 
 Use `PageIntro` for an ordinary scene heading. It fixes the relationship between eyebrow, title, and explanatory copy. Use the title scale for low-density pages and the subtitle scale for charts, tables, code, or other dense scenes. Do not move a title upward simply because one scene has more content; reduce the content, use the compact title scale, or split the scene.
 
@@ -49,8 +49,6 @@ Use `CoverPage` for the first frame and `SectionPage` for chapter boundaries. Th
   }}
   footer={{
     subtitle: "折线揭示趋势，里程碑只标记真正的转折点。",
-    meta: "source / benchmark index",
-    page: "06 / 12",
   }}
 >
   <ContentLayout
@@ -66,7 +64,9 @@ Use `CoverPage` for the first frame and `SectionPage` for chapter boundaries. Th
 
 Use HarmonyOS Sans SC for narrative UI and video text, with Chinese system fonts as fallback. Use Chivo Mono only for code and command-like details. Keep letter spacing at `0`.
 
-Use `Eyebrow` for section position, `Title` for the main scene message, `BodyText` for explanatory copy, and `Caption` for sources, figure notes, or other low-priority text. `Prompt` and black `$ ...` terminal bars are reserved for real commands, terminal output, and code-adjacent UI only. Do not use them as general scene headings, table captions, chart titles, media labels, or component catalog decoration.
+Use `Eyebrow` for a local principle, evidence type, or short content cue; use `Title` for the main scene message, `BodyText` for explanatory copy, and `Caption` for sources, figure notes, or other low-priority text. The default eyebrow marker is a narrow vertical accent bar, not a decorative horizontal dash. Do not repeat the header's section label verbatim in the eyebrow. Use `marker="none"` when the surrounding layout already supplies a strong alignment cue.
+
+`Prompt` and black `$ ...` terminal bars are reserved for real commands, terminal output, and code-adjacent UI only. Do not use them as general scene headings, table captions, chart titles, media labels, or component catalog decoration.
 
 Use `TextFit` only when props can contain long text. Do not reduce important text below the tokenized caption scale; split the idea into another scene instead.
 
@@ -151,7 +151,7 @@ Use `RevealText` for split text motion and `KineticTitle` for standalone chapter
 
 ## Captions And Subtitles
 
-Place ordinary narration subtitles in the fixed footer region supplied by `PageLayout`; do not position them inside scene content. `PageSubtitle` supplies the shared contrast plate and typography. Keep lines short, break on semantic phrases, and avoid more than two subtitle lines at once. For portrait canvases, keep this region above platform UI risk zones through the portrait safe-area token.
+Place ordinary narration subtitles in the fixed footer region supplied by `PageLayout`; do not position them inside scene content. `PageSubtitle` supplies the shared contrast plate and typography. Keep lines short and break on semantic phrases: one line in landscape, at most two in square or portrait. For portrait canvases, keep this region above platform UI risk zones through the portrait safe-area token.
 
 The StyleGuide uses static strings to simulate narration captions. Production captions must come from deterministic timed caption data, preferably JSON using Remotion's `Caption` shape, while `PageSubtitle` remains the visual renderer for the active phrase.
 
@@ -168,6 +168,7 @@ Approved voiceover belongs in `public/videos/<video-id>/audio/voiceover/`. Tempo
 - Paper background with hard one-pixel rules.
 - Stable navigation, content, and subtitle regions across ordinary scenes.
 - A fixed footer divider position regardless of subtitle length or presence.
+- Vertical eyebrow accents paired with specific local cues rather than repeated section names.
 - Explicit `CoverPage` and `SectionPage` variants for opening and chapter boundaries.
 - `ContentLayout` variants chosen by narrative relationship rather than local coordinates.
 - Dense ledgers when one focal point remains obvious.
@@ -193,6 +194,8 @@ Approved voiceover belongs in `public/videos/<video-id>/audio/voiceover/`. Tempo
 - Scene-specific safe-area padding, manually positioned page headers, or ad hoc top rules.
 - Ordinary content pages that omit the navigation/footer chrome without a documented full-frame reason.
 - Page-specific footer heights, subtitle offsets, or custom narration-caption styling.
+- Footer metadata or page numbers that duplicate the navigation header.
+- Short horizontal dashes used as generic eyebrow decoration.
 
 ## Studio Entry
 

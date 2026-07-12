@@ -46,6 +46,11 @@ export const theme = {
       body: 1.36,
       caption: 1.42,
     },
+    eyebrow: {
+      markerWidth: 3,
+      markerHeight: 22,
+      markerRadius: 2,
+    },
     maxChars: {
       title: 18,
       captionLine: 18,
@@ -62,24 +67,39 @@ export const theme = {
     xxl: 96,
   },
   safeArea: {
-    landscape: { x: 72, y: 48 },
+    landscape: { x: 72, y: 40 },
     portrait: { x: 56, y: 72 },
-    square: { x: 64, y: 56 },
+    square: { x: 64, y: 48 },
   },
   layout: {
     headerHeight: 58,
-    footerHeight: 116,
-    footerMetaHeight: 24,
+    footerHeight: {
+      landscape: 64,
+      portrait: 112,
+      square: 92,
+    },
+    footerPadding: {
+      top: 20,
+      bottom: 4,
+    },
     coverFooterHeight: 58,
     subtitle: {
       maxWidth: 1380,
       paddingX: 18,
-      paddingY: 5,
+      paddingY: 4,
       radius: 2,
       lineHeight: 1.2,
-      maxLines: 2,
+      maxLines: {
+        landscape: 1,
+        portrait: 2,
+        square: 2,
+      },
     },
-    regionGap: 24,
+    regionGap: {
+      landscape: 18,
+      portrait: 24,
+      square: 18,
+    },
     contentGap: 42,
     introWidth: 560,
     centerMaxWidth: 1320,
