@@ -133,9 +133,30 @@ Table animation must be frame-driven. Use the built-in row reveal for ordered di
 
 ## Charts
 
-Use `ChartFrame` to place charts in the same hard-edged visual system as screenshots and code. Use `BarChart` for category comparison, `LineChart` for trend over time, `RacingBarChart` for ranking changes across snapshots, and `PieChart` only for simple composition or share-of-total stories. Do not use pie charts for precise comparisons between many categories.
+Use `ChartFrame` to place charts in the same hard-edged visual system as screenshots and code. Use `BarChart` for one-series category comparison, `ComparisonChart` for one to four series on a shared scale, `LineChart` for trend over time, `RacingBarChart` for ranking changes across snapshots, and `PieChart` only for simple composition or share-of-total stories. Do not use pie charts for precise comparisons between many categories.
 
 Chart animation must be frame-driven. Bars grow from the baseline, line charts reveal through stroke progress and optional milestone labels, racing bars interpolate value and rank between dated snapshots, and pie slices expand by angle. Keep labels short, use muted captions for context, and keep the chart focused on one message per scene.
+
+`ComparisonChart` supports `horizontal` and `vertical` orientations with at most four series. Prefer horizontal orientation when category names are long or there are many rows; prefer vertical orientation when there are fewer categories and overall magnitude is the main story. Series order must remain stable across scenes.
+
+The default comparison gradients come from `tokens.ts` and use restrained orange, blue, green, and purple ramps. A series may override its gradient, but avoid high-saturation rainbow palettes or gradients that change meaning between scenes. Value labels may appear on every bar; percentage deltas should compare only one designated series against one baseline so multi-series charts remain readable.
+
+```tsx
+<ComparisonChart
+  series={[
+    { id: "v1", label: "Version 1" },
+    { id: "v2", label: "Version 2" },
+    { id: "v3", label: "Version 3" },
+  ]}
+  data={[
+    { label: "Project A", values: { v1: 5.2, v2: 4.6, v3: 4.1 } },
+    { label: "Project B", values: { v1: 3.8, v2: 3.2, v3: 2.9 } },
+  ]}
+  orientation="horizontal"
+  baselineSeriesId="v1"
+  deltaSeriesId="v3"
+/>
+```
 
 For `RacingBarChart`, keep the changing year in the reserved footer area instead of placing it behind the bars. The footer can also hold short timeline notes or source labels, while the plot area remains dedicated to moving bars and ranks.
 

@@ -39,6 +39,7 @@ export type {
 export {
   BarChart,
   ChartFrame,
+  ComparisonChart,
   LineChart,
   PieChart,
   RacingBarChart,
@@ -48,6 +49,9 @@ export type {
   ChartDatum,
   ChartFrameProps,
   ChartMilestone,
+  ComparisonChartProps,
+  ComparisonDatum,
+  ComparisonSeries,
   LineChartProps,
   PieChartProps,
   RacingBarChartProps,

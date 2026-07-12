@@ -26,6 +26,42 @@ export type RacingBarSnapshot = {
   values: RacingBarDatum[];
 };
 
+export type ComparisonSeries = {
+  id: string;
+  label: string;
+  gradient?: readonly [string, string];
+};
+
+export type ComparisonDatum = {
+  label: string;
+  note?: string;
+  values: Record<string, number>;
+};
+
+export type ComparisonChartProps = {
+  series: ComparisonSeries[];
+  data: ComparisonDatum[];
+  orientation?: "horizontal" | "vertical";
+  width?: number;
+  height?: number;
+  maxValue?: number;
+  from?: number;
+  duration?: number;
+  stagger?: number;
+  unit?: string;
+  showLegend?: boolean;
+  showValues?: boolean;
+  showGrid?: boolean;
+  baselineSeriesId?: string;
+  deltaSeriesId?: string;
+  formatValueLabel?: (
+    value: number,
+    datum: ComparisonDatum,
+    series: ComparisonSeries,
+  ) => string;
+  style?: CSSProperties;
+};
+
 export type ChartFrameProps = {
   title?: ReactNode;
   caption?: ReactNode;
@@ -104,6 +140,8 @@ const chartPalette = [
   theme.colors.category.qo,
   theme.colors.muted,
 ] as const;
+
+const comparisonGradients = theme.chart.comparisonGradients;
 
 const chartFont = theme.typography.family;
 const svgTextStyle = {
@@ -390,6 +428,491 @@ export const BarChart = ({
             >
               {item.label}
             </text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+};
+
+type ComparisonLegendEntry = {
+  item: ComparisonSeries;
+  index: number;
+  x: number;
+  y: number;
+};
+
+const getComparisonLegendLayout = ({
+  series,
+  x,
+  y,
+  maxWidth,
+}: {
+  series: ComparisonSeries[];
+  x: number;
+  y: number;
+  maxWidth: number;
+}) => {
+  const rowGap = 28;
+  const entries: ComparisonLegendEntry[] = [];
+  let offsetX = 0;
+  let row = 0;
+
+  series.forEach((item, index) => {
+    const itemWidth = Math.max(92, item.label.length * 14 + 42);
+
+    if (offsetX > 0 && offsetX + itemWidth > maxWidth) {
+      row += 1;
+      offsetX = 0;
+    }
+
+    entries.push({
+      item,
+      index,
+      x: x + offsetX,
+      y: y + row * rowGap,
+    });
+    offsetX += itemWidth;
+  });
+
+  return { entries, rows: row + 1, rowGap };
+};
+
+const ComparisonLegend = ({
+  entries,
+  gradientIds,
+}: {
+  entries: ComparisonLegendEntry[];
+  gradientIds: string[];
+}) => (
+  <g>
+    {entries.map(({ item, index, x, y }) => (
+      <g key={item.id} transform={`translate(${x} ${y})`}>
+        <rect
+          x={0}
+          y={-12}
+          width={24}
+          height={8}
+          rx={4}
+          fill={`url(#${gradientIds[index]})`}
+        />
+        <text
+          x={34}
+          y={0}
+          fill={theme.colors.muted}
+          fontSize={19}
+          fontWeight={theme.typography.weight.medium}
+          style={svgTextStyle}
+        >
+          {item.label}
+        </text>
+      </g>
+    ))}
+  </g>
+);
+
+export const ComparisonChart = ({
+  series,
+  data,
+  orientation = "horizontal",
+  width = orientation === "horizontal" ? 920 : 720,
+  height = 520,
+  maxValue,
+  from = 0,
+  duration = theme.motion.duration.sceneChange,
+  stagger = 2,
+  unit = "",
+  showLegend = true,
+  showValues = true,
+  showGrid = true,
+  baselineSeriesId,
+  deltaSeriesId,
+  formatValueLabel,
+  style,
+}: ComparisonChartProps) => {
+  const frame = useCurrentFrame();
+  const generatedId = useId().replace(/[^a-zA-Z0-9_-]/g, "");
+
+  if (series.length === 0 || series.length > 4) {
+    throw new Error("ComparisonChart requires between 1 and 4 series.");
+  }
+
+  if (new Set(series.map((item) => item.id)).size !== series.length) {
+    throw new Error("ComparisonChart series ids must be unique.");
+  }
+
+  const gradients = series.map(
+    (item, index) =>
+      item.gradient ?? comparisonGradients[index % comparisonGradients.length],
+  );
+  const gradientIds = series.map(
+    (_, index) => `comparison-${generatedId}-${index}`,
+  );
+  const allValues = data.flatMap((datum) =>
+    series.map((item) => Math.max(0, datum.values[item.id] ?? 0)),
+  );
+  const max = Math.max(maxValue ?? Math.max(...allValues, 1), 1);
+  const baselineId = baselineSeriesId ?? series[0]?.id;
+  const deltaId = deltaSeriesId;
+  const labelForValue = (
+    value: number,
+    datum: ComparisonDatum,
+    item: ComparisonSeries,
+  ) => formatValueLabel?.(value, datum, item) ?? formatValue(value, unit);
+  const deltaFor = (datum: ComparisonDatum, item: ComparisonSeries) => {
+    if (!deltaId || item.id !== deltaId || item.id === baselineId) {
+      return null;
+    }
+
+    const baseline = datum.values[baselineId] ?? 0;
+    if (baseline === 0) {
+      return null;
+    }
+
+    return ((datum.values[item.id] ?? 0) - baseline) / baseline;
+  };
+  if (orientation === "horizontal") {
+    const horizontalLegend = getComparisonLegendLayout({
+      series,
+      x: 192,
+      y: 30,
+      maxWidth: width - 216,
+    });
+    const margin = {
+      top: showLegend
+        ? 38 + horizontalLegend.rows * horizontalLegend.rowGap
+        : 18,
+      right: deltaId ? 118 : 36,
+      bottom: 18,
+      left: 192,
+    };
+    const chartWidth = width - margin.left - margin.right;
+    const chartHeight = height - margin.top - margin.bottom;
+    const groupHeight = chartHeight / Math.max(data.length, 1);
+    const seriesGap = 5;
+    const availableBarHeight = Math.max(
+      8,
+      groupHeight - Math.min(24, groupHeight * 0.28),
+    );
+    const barHeight = Math.min(
+      28,
+      (availableBarHeight - seriesGap * (series.length - 1)) / series.length,
+    );
+    const groupBarsHeight =
+      barHeight * series.length + seriesGap * (series.length - 1);
+
+    return (
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        style={{ width: "100%", height: "100%", ...style }}
+      >
+        <defs>
+          {series.map((item, index) => (
+            <linearGradient
+              key={item.id}
+              id={gradientIds[index]}
+              x1="0%"
+              y1="0%"
+              x2="100%"
+              y2="0%"
+            >
+              <stop offset="0%" stopColor={gradients[index][0]} />
+              <stop offset="100%" stopColor={gradients[index][1]} />
+            </linearGradient>
+          ))}
+        </defs>
+        {showLegend ? (
+          <ComparisonLegend
+            entries={horizontalLegend.entries}
+            gradientIds={gradientIds}
+          />
+        ) : null}
+        {showGrid
+          ? [0.25, 0.5, 0.75, 1].map((ratio) => {
+              const x = margin.left + chartWidth * ratio;
+              return (
+                <line
+                  key={ratio}
+                  x1={x}
+                  x2={x}
+                  y1={margin.top - 8}
+                  y2={height - margin.bottom}
+                  stroke={theme.colors.hairlineSoft}
+                  strokeWidth={1}
+                />
+              );
+            })
+          : null}
+        {data.map((datum, datumIndex) => {
+          const groupY = margin.top + datumIndex * groupHeight;
+          const barsY = groupY + (groupHeight - groupBarsHeight) / 2;
+
+          return (
+            <g key={`${datum.label}-${datumIndex}`}>
+              {datumIndex > 0 ? (
+                <line
+                  x1={margin.left}
+                  x2={width - margin.right}
+                  y1={groupY}
+                  y2={groupY}
+                  stroke={theme.colors.hairlineSoft}
+                  strokeWidth={1}
+                />
+              ) : null}
+              <text
+                x={margin.left - 20}
+                y={groupY + groupHeight / 2 - (datum.note ? 5 : -7)}
+                fill={theme.colors.body}
+                fontSize={21}
+                fontWeight={theme.typography.weight.semibold}
+                textAnchor="end"
+                style={svgTextStyle}
+              >
+                {datum.label}
+              </text>
+              {datum.note ? (
+                <text
+                  x={margin.left - 20}
+                  y={groupY + groupHeight / 2 + 20}
+                  fill={theme.colors.muted}
+                  fontSize={16}
+                  textAnchor="end"
+                  style={svgTextStyle}
+                >
+                  {datum.note}
+                </text>
+              ) : null}
+              {series.map((item, seriesIndex) => {
+                const value = Math.max(0, datum.values[item.id] ?? 0);
+                const progress = getProgress(
+                  frame,
+                  from + (datumIndex * series.length + seriesIndex) * stagger,
+                  duration,
+                );
+                const targetWidth =
+                  (clampValue(value, 0, max) / max) * chartWidth;
+                const currentWidth = targetWidth * progress;
+                const y = barsY + seriesIndex * (barHeight + seriesGap);
+                const valueInside = currentWidth > 48;
+                const delta = deltaFor(datum, item);
+
+                return (
+                  <g key={item.id} opacity={progress}>
+                    <rect
+                      x={margin.left}
+                      y={y}
+                      width={currentWidth}
+                      height={barHeight}
+                      rx={4}
+                      fill={`url(#${gradientIds[seriesIndex]})`}
+                    />
+                    {showValues ? (
+                      <text
+                        x={
+                          valueInside
+                            ? margin.left + currentWidth - 10
+                            : margin.left + currentWidth + 8
+                        }
+                        y={y + barHeight / 2 + 6}
+                        fill={
+                          valueInside ? theme.colors.canvas : theme.colors.body
+                        }
+                        fontSize={17}
+                        fontWeight={theme.typography.weight.semibold}
+                        textAnchor={valueInside ? "end" : "start"}
+                        style={svgTextStyle}
+                      >
+                        {labelForValue(value, datum, item)}
+                      </text>
+                    ) : null}
+                    {delta !== null ? (
+                      <text
+                        x={
+                          margin.left +
+                          currentWidth +
+                          (valueInside || !showValues ? 12 : 70)
+                        }
+                        y={y + barHeight / 2 + 6}
+                        fill={gradients[seriesIndex][1]}
+                        fontSize={17}
+                        fontWeight={theme.typography.weight.semibold}
+                        textAnchor="start"
+                        style={svgTextStyle}
+                      >
+                        {`${delta > 0 ? "+" : ""}${Math.round(delta * 100)}%`}
+                      </text>
+                    ) : null}
+                  </g>
+                );
+              })}
+            </g>
+          );
+        })}
+      </svg>
+    );
+  }
+
+  const verticalLegend = getComparisonLegendLayout({
+    series,
+    x: 48,
+    y: 30,
+    maxWidth: width - 72,
+  });
+  const margin = {
+    top: showLegend ? 38 + verticalLegend.rows * verticalLegend.rowGap : 18,
+    right: 24,
+    bottom: 82,
+    left: 48,
+  };
+  const chartWidth = width - margin.left - margin.right;
+  const chartHeight = height - margin.top - margin.bottom;
+  const slotWidth = chartWidth / Math.max(data.length, 1);
+  const groupWidth = slotWidth * 0.76;
+  const seriesGap = 5;
+  const barWidth = Math.min(
+    42,
+    (groupWidth - seriesGap * (series.length - 1)) / series.length,
+  );
+  const actualGroupWidth =
+    barWidth * series.length + seriesGap * (series.length - 1);
+
+  return (
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      style={{ width: "100%", height: "100%", ...style }}
+    >
+      <defs>
+        {series.map((item, index) => (
+          <linearGradient
+            key={item.id}
+            id={gradientIds[index]}
+            x1="0%"
+            y1="100%"
+            x2="0%"
+            y2="0%"
+          >
+            <stop offset="0%" stopColor={gradients[index][0]} />
+            <stop offset="100%" stopColor={gradients[index][1]} />
+          </linearGradient>
+        ))}
+      </defs>
+      {showLegend ? (
+        <ComparisonLegend
+          entries={verticalLegend.entries}
+          gradientIds={gradientIds}
+        />
+      ) : null}
+      {showGrid
+        ? [0.25, 0.5, 0.75, 1].map((ratio) => {
+            const y = margin.top + chartHeight * (1 - ratio);
+            return (
+              <line
+                key={ratio}
+                x1={margin.left}
+                x2={width - margin.right}
+                y1={y}
+                y2={y}
+                stroke={theme.colors.hairlineSoft}
+                strokeWidth={1}
+              />
+            );
+          })
+        : null}
+      <line
+        x1={margin.left}
+        x2={width - margin.right}
+        y1={margin.top + chartHeight}
+        y2={margin.top + chartHeight}
+        stroke={theme.colors.hairline}
+        strokeWidth={1}
+      />
+      {data.map((datum, datumIndex) => {
+        const groupX =
+          margin.left +
+          datumIndex * slotWidth +
+          (slotWidth - actualGroupWidth) / 2;
+
+        return (
+          <g key={`${datum.label}-${datumIndex}`}>
+            {series.map((item, seriesIndex) => {
+              const value = Math.max(0, datum.values[item.id] ?? 0);
+              const progress = getProgress(
+                frame,
+                from + (datumIndex * series.length + seriesIndex) * stagger,
+                duration,
+              );
+              const targetHeight =
+                (clampValue(value, 0, max) / max) * chartHeight;
+              const currentHeight = targetHeight * progress;
+              const x = groupX + seriesIndex * (barWidth + seriesGap);
+              const y = margin.top + chartHeight - currentHeight;
+              const valueInside = currentHeight > 58;
+              const delta = deltaFor(datum, item);
+
+              return (
+                <g key={item.id} opacity={progress}>
+                  <rect
+                    x={x}
+                    y={y}
+                    width={barWidth}
+                    height={currentHeight}
+                    rx={4}
+                    fill={`url(#${gradientIds[seriesIndex]})`}
+                  />
+                  {showValues ? (
+                    <text
+                      x={x + barWidth / 2}
+                      y={valueInside ? y + 20 : y - 8}
+                      fill={
+                        valueInside ? theme.colors.canvas : theme.colors.body
+                      }
+                      fontSize={15}
+                      fontWeight={theme.typography.weight.semibold}
+                      textAnchor="middle"
+                      style={svgTextStyle}
+                    >
+                      {labelForValue(value, datum, item)}
+                    </text>
+                  ) : null}
+                  {delta !== null ? (
+                    <text
+                      x={x + barWidth / 2}
+                      y={y - 26}
+                      fill={gradients[seriesIndex][1]}
+                      fontSize={15}
+                      fontWeight={theme.typography.weight.semibold}
+                      textAnchor="middle"
+                      style={svgTextStyle}
+                    >
+                      {`${delta > 0 ? "+" : ""}${Math.round(delta * 100)}%`}
+                    </text>
+                  ) : null}
+                </g>
+              );
+            })}
+            <text
+              x={margin.left + datumIndex * slotWidth + slotWidth / 2}
+              y={height - 42}
+              fill={theme.colors.body}
+              fontSize={19}
+              fontWeight={theme.typography.weight.medium}
+              textAnchor="middle"
+              style={svgTextStyle}
+            >
+              {datum.label}
+            </text>
+            {datum.note ? (
+              <text
+                x={margin.left + datumIndex * slotWidth + slotWidth / 2}
+                y={height - 18}
+                fill={theme.colors.muted}
+                fontSize={15}
+                textAnchor="middle"
+                style={svgTextStyle}
+              >
+                {datum.note}
+              </text>
+            ) : null}
           </g>
         );
       })}

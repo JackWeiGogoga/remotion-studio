@@ -15,6 +15,8 @@ import {
   Caption,
   ChartFrame,
   CodeFrame,
+  ComparisonChart,
+  type ComparisonSeries,
   ContentLayout,
   CoverPage,
   DataTable,
@@ -49,6 +51,7 @@ const textMotionDuration = seconds(5, fps);
 const mediaDuration = seconds(4, fps);
 const chartLineDuration = seconds(4, fps);
 const chartRaceDuration = seconds(7, fps);
+const comparisonDuration = seconds(5, fps);
 const tableDuration = seconds(4, fps);
 const codeMotionDuration = seconds(4, fps);
 const storyDuration = seconds(4, fps);
@@ -59,7 +62,8 @@ const textMotionStart = typeStart + typeDuration;
 const mediaStart = textMotionStart + textMotionDuration;
 const chartLineStart = mediaStart + mediaDuration;
 const chartRaceStart = chartLineStart + chartLineDuration;
-const tableStart = chartRaceStart + chartRaceDuration;
+const comparisonStart = chartRaceStart + chartRaceDuration;
+const tableStart = comparisonStart + comparisonDuration;
 const codeMotionStart = tableStart + tableDuration;
 const narrativeStart = codeMotionStart + codeMotionDuration;
 
@@ -187,7 +191,7 @@ const CoverLayoutDiagram = () => (
 const CoverSlide = ({ headline, caption }: StyleGuideProps) => (
   <CoverPage
     brand="REMOTION STUDIO / ARCHIVE MONO"
-    edition="STYLE GUIDE / 12 SCENES"
+    edition="STYLE GUIDE / 13 SCENES"
     eyebrow="中文知识视频 / Visual System"
     title={
       <>
@@ -214,7 +218,7 @@ const SectionTransitionSlide = () => (
   <SectionPage
     brand={guideBrand}
     section="01 / 页面系统"
-    index="01 / 12"
+    index="01 / 13"
     title={"页面先统一\n组件才有意义"}
     subtitle="SectionPage / 章节切换 / deterministic text reveal"
   />
@@ -274,7 +278,7 @@ const LayoutDiagram = ({
 const LayoutSystemSlide = () => (
   <GuidePage
     section="页面布局 / Layout"
-    index="02 / 12"
+    index="02 / 13"
     subtitle="导航、内容和字幕拥有固定槽位；内容区只选择布局，不再重新发明页面边界。"
   >
     <ContentLayout
@@ -416,7 +420,7 @@ const ColorBoard = () => (
 const TypographySlide = () => (
   <GuidePage
     section="文字系统 / Typography"
-    index="03 / 12"
+    index="03 / 13"
     subtitle="标题、小标题、正文和图注各占一个层级，所有页面从同一内容基线开始。"
   >
     <ContentLayout
@@ -441,7 +445,7 @@ const TypographySlide = () => (
 const TextMotionSlide = () => (
   <GuidePage
     section="文字动效 / Text Motion"
-    index="04 / 12"
+    index="04 / 13"
     subtitle="逐字用于短中文标题，逐词用于英文短句，逐行用于两到三层判断。"
   >
     <ContentLayout
@@ -520,7 +524,7 @@ const TextMotionSlide = () => (
 const MediaSystemSlide = () => (
   <GuidePage
     section="媒体系统 / Media"
-    index="05 / 12"
+    index="05 / 13"
     subtitle="图片和动图进入固定内容区；图注位于媒体下方，不遮挡素材本身。"
   >
     <ContentLayout
@@ -808,7 +812,7 @@ const modelTableColumns: DataTableColumn<ModelCapabilityRow>[] = [
 const LlmTimelineChartSlide = () => (
   <GuidePage
     section="图表系统 / Line Chart"
-    index="06 / 12"
+    index="06 / 13"
     subtitle="折线揭示趋势，里程碑只标记真正改变叙事方向的节点。"
   >
     <ContentLayout
@@ -862,7 +866,7 @@ const LlmTimelineChartSlide = () => (
 const RacingBarChartSlide = () => (
   <GuidePage
     section="图表系统 / Racing Bar"
-    index="07 / 12"
+    index="07 / 13"
     subtitle="排名位置、数值和年份同时连续插值，底部文字区不会再与图形争抢空间。"
   >
     <ContentLayout
@@ -908,10 +912,120 @@ const RacingBarChartSlide = () => (
   </GuidePage>
 );
 
+const comparisonSeries: ComparisonSeries[] = [
+  { id: "ts5", label: "TypeScript 5" },
+  { id: "ts6", label: "TypeScript 6" },
+  { id: "ts7", label: "TypeScript 7" },
+  { id: "optimized", label: "TS 7 optimized" },
+];
+
+const comparisonData = [
+  {
+    label: "VS Code",
+    note: "2.3M LoC",
+    values: { ts5: 5.8, ts6: 5.2, ts7: 4.4, optimized: 4.0 },
+  },
+  {
+    label: "Sentry",
+    note: "1.9M LoC",
+    values: { ts5: 5.4, ts6: 4.9, ts7: 4.6, optimized: 4.2 },
+  },
+  {
+    label: "Bluesky",
+    note: "628K LoC",
+    values: { ts5: 2.2, ts6: 1.8, ts7: 1.3, optimized: 1.1 },
+  },
+  {
+    label: "Playwright",
+    note: "528K LoC",
+    values: { ts5: 1.3, ts6: 1.0, ts7: 0.9, optimized: 0.8 },
+  },
+];
+
+const ComparisonChartSlide = () => (
+  <GuidePage
+    section="图表系统 / Comparison"
+    index="08 / 13"
+    subtitle="多组对比先统一量纲，再决定横向或纵向；颜色只负责区分系列。"
+  >
+    <ContentLayout
+      variant="split"
+      ratio="1:2"
+      primary={
+        <Stack gap="lg">
+          <PageIntro
+            eyebrow="多组对比 / Up to 4 series"
+            title="同一量纲，最多比较四组数据。"
+            body="适合版本、方案、地区和模型之间的横向比较。横版容纳长名称，竖版强调总体量级。"
+            size="subtitle"
+          />
+          <Stack gap="sm">
+            <BodyText size="caption">series：一到四组，图例固定排序。</BodyText>
+            <BodyText size="caption">
+              delta：只突出一个系列相对基准的变化。
+            </BodyText>
+            <BodyText size="caption">
+              gradient：低反差渐变，增强质感但不抢数据。
+            </BodyText>
+          </Stack>
+        </Stack>
+      }
+      secondary={
+        <div
+          style={{
+            height: "100%",
+            minWidth: 0,
+            display: "grid",
+            gridTemplateColumns: "1.28fr 0.92fr",
+            gap: theme.space.sm,
+          }}
+        >
+          <ChartFrame
+            title="大型项目内存占用"
+            caption="horizontal / baseline delta / demo data"
+            style={{ height: "100%", minWidth: 0 }}
+          >
+            <ComparisonChart
+              series={comparisonSeries}
+              data={comparisonData}
+              orientation="horizontal"
+              maxValue={6.2}
+              unit=" GB"
+              baselineSeriesId="ts5"
+              deltaSeriesId="optimized"
+              from={10}
+              duration={74}
+              width={780}
+              height={560}
+            />
+          </ChartFrame>
+          <ChartFrame
+            title="纵向分组表达"
+            caption="vertical / four series / same scale"
+            style={{ height: "100%", minWidth: 0 }}
+          >
+            <ComparisonChart
+              series={comparisonSeries}
+              data={comparisonData.slice(0, 3)}
+              orientation="vertical"
+              maxValue={6.2}
+              unit=""
+              from={18}
+              duration={74}
+              width={540}
+              height={560}
+            />
+          </ChartFrame>
+        </div>
+      }
+    />
+  </GuidePage>
+);
+
 const TableSystemSlide = () => (
   <GuidePage
     section="表格系统 / DataTable"
-    index="08 / 12"
+    index="09 / 13"
     subtitle="列宽、状态与逐行进入遵循固定规则，观众可以快速扫到结论。"
   >
     <ContentLayout
@@ -1021,7 +1135,7 @@ const MotionStrip = () => {
 const CodeMotionSlide = () => (
   <GuidePage
     section="代码与动效 / Code + Motion"
-    index="09 / 12"
+    index="10 / 13"
     subtitle="代码先离线高亮，再按当前帧聚焦；命令行样式只在真正的代码语境中出现。"
   >
     <ContentLayout
@@ -1132,7 +1246,7 @@ const StorySlide = ({
 const TweetStory = () => (
   <StorySlide
     section="叙事示例 / Source"
-    index="10 / 12"
+    index="11 / 13"
     subtitle="他们给出的不是更乐观的预测，而是一条主动选择的路径。"
     eyebrow="01 / 来源"
     title="Daniel Kokotajlo 是这么介绍的："
@@ -1169,7 +1283,7 @@ const TweetStory = () => (
 const Ai2027Story = () => (
   <StorySlide
     section="叙事示例 / Context"
-    index="11 / 12"
+    index="12 / 13"
     subtitle="理解 Plan A 之前，需要先理解《AI 2027》给出的风险基线。"
     eyebrow="02 / 背景"
     title="如果你没读过《AI 2027》，这里补个课。"
@@ -1195,7 +1309,7 @@ const Ai2027Story = () => (
 const ForecastProcessStory = () => (
   <StorySlide
     section="叙事示例 / Timeline"
-    index="12 / 12"
+    index="13 / 13"
     subtitle="逐月推演把抽象风险变成一条可以检查、质疑和讨论的时间线。"
     eyebrow="03 / 推演"
     title="2025 年 4 月，他们发布了一份逐月推演的 AI 未来场景。"
@@ -1252,6 +1366,9 @@ export const StyleGuide = ({ headline, caption }: StyleGuideProps) => (
     </Sequence>
     <Sequence from={chartRaceStart} durationInFrames={chartRaceDuration}>
       <RacingBarChartSlide />
+    </Sequence>
+    <Sequence from={comparisonStart} durationInFrames={comparisonDuration}>
+      <ComparisonChartSlide />
     </Sequence>
     <Sequence from={tableStart} durationInFrames={tableDuration}>
       <TableSystemSlide />
