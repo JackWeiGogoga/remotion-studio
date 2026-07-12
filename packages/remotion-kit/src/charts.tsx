@@ -19,6 +19,7 @@ export type ChartMilestone = {
 
 export type RacingBarDatum = ChartDatum & {
   id: string;
+  gradient?: readonly [string, string];
 };
 
 export type RacingBarSnapshot = {
@@ -129,6 +130,7 @@ export type RacingBarChartProps = {
   labelWidth?: number;
   footerHeight?: number;
   footerText?: string;
+  fillStyle?: "gradient" | "solid";
   style?: CSSProperties;
 };
 
@@ -141,7 +143,7 @@ const chartPalette = [
   theme.colors.muted,
 ] as const;
 
-const comparisonGradients = theme.chart.comparisonGradients;
+const seriesGradients = theme.chart.seriesGradients;
 
 const chartFont = theme.typography.family;
 const svgTextStyle = {
@@ -543,7 +545,7 @@ export const ComparisonChart = ({
 
   const gradients = series.map(
     (item, index) =>
-      item.gradient ?? comparisonGradients[index % comparisonGradients.length],
+      item.gradient ?? seriesGradients[index % seriesGradients.length],
   );
   const gradientIds = series.map(
     (_, index) => `comparison-${generatedId}-${index}`,
@@ -1175,11 +1177,12 @@ export const RacingBarChart = ({
   labelWidth = 230,
   footerHeight = 88,
   footerText,
+  fillStyle = "gradient",
   style,
 }: RacingBarChartProps) => {
   const frame = useCurrentFrame();
-  const generatedId = useId();
-  const plotClipPathId = `racing-bars-${generatedId.replace(/[^a-zA-Z0-9_-]/g, "")}`;
+  const generatedId = useId().replace(/[^a-zA-Z0-9_-]/g, "");
+  const plotClipPathId = `racing-bars-${generatedId}`;
   const safeSnapshots =
     snapshots.length > 0 ? snapshots : [{ label: "", values: [] }];
   const segmentCount = Math.max(safeSnapshots.length - 1, 0);
@@ -1258,6 +1261,10 @@ export const RacingBarChart = ({
         value,
         color:
           source?.color ?? chartPalette[paletteIndex % chartPalette.length],
+        gradient:
+          source?.gradient ??
+          seriesGradients[paletteIndex % seriesGradients.length],
+        gradientId: `racing-gradient-${generatedId}-${paletteIndex}`,
         rank,
       };
     })
@@ -1281,9 +1288,24 @@ export const RacingBarChart = ({
       viewBox={`0 0 ${width} ${height}`}
       style={{ width: "100%", height: "100%", ...style }}
     >
-      <clipPath id={plotClipPathId}>
-        <rect x={0} y={0} width={width} height={chartBottom} />
-      </clipPath>
+      <defs>
+        <clipPath id={plotClipPathId}>
+          <rect x={0} y={0} width={width} height={chartBottom} />
+        </clipPath>
+        {currentItems.map((item) => (
+          <linearGradient
+            key={item.gradientId}
+            id={item.gradientId}
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="0%"
+          >
+            <stop offset="0%" stopColor={item.gradient[0]} />
+            <stop offset="100%" stopColor={item.gradient[1]} />
+          </linearGradient>
+        ))}
+      </defs>
       <g clipPath={`url(#${plotClipPathId})`}>
         {[0.25, 0.5, 0.75, 1].map((ratio) => {
           const x = margin.left + chartWidth * ratio;
@@ -1335,13 +1357,19 @@ export const RacingBarChart = ({
                 width={chartWidth}
                 height={barHeight}
                 fill={theme.colors.surfaceSoft}
+                rx={4}
               />
               <rect
                 x={margin.left}
                 y={y}
                 width={barWidth}
                 height={barHeight}
-                fill={item.color}
+                fill={
+                  fillStyle === "gradient"
+                    ? `url(#${item.gradientId})`
+                    : item.color
+                }
+                rx={4}
               />
               <g opacity={labelOpacity}>
                 <text

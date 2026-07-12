@@ -139,7 +139,7 @@ Chart animation must be frame-driven. Bars grow from the baseline, line charts r
 
 `ComparisonChart` supports `horizontal` and `vertical` orientations with at most four series. Prefer horizontal orientation when category names are long or there are many rows; prefer vertical orientation when there are fewer categories and overall magnitude is the main story. Series order must remain stable across scenes.
 
-The default comparison gradients come from `tokens.ts` and use restrained orange, blue, green, and purple ramps. A series may override its gradient, but avoid high-saturation rainbow palettes or gradients that change meaning between scenes. Value labels may appear on every bar; percentage deltas should compare only one designated series against one baseline so multi-series charts remain readable.
+The shared series gradients come from `tokens.ts` and use restrained orange, blue, green, purple, rose, and graphite ramps. `ComparisonChart` and `RacingBarChart` use this same palette so chart scenes remain visually related. A series or racing datum may override its gradient, but avoid high-saturation rainbow palettes or gradients that change meaning between scenes. Value labels may appear on every comparison bar; percentage deltas should compare only one designated series against one baseline so multi-series charts remain readable.
 
 ```tsx
 <ComparisonChart
@@ -158,7 +158,9 @@ The default comparison gradients come from `tokens.ts` and use restrained orange
 />
 ```
 
-For `RacingBarChart`, keep the changing year in the reserved footer area instead of placing it behind the bars. The footer can also hold short timeline notes or source labels, while the plot area remains dedicated to moving bars and ranks.
+For `RacingBarChart`, keep the changing year in the reserved footer area instead of placing it behind the bars. The footer can also hold short timeline notes or source labels, while the plot area remains dedicated to moving bars and ranks. Its default `fillStyle="gradient"` uses the shared series palette; use `fillStyle="solid"` only when exact semantic colors are required.
+
+Do not merge `RacingBarChart` and `ComparisonChart` into one behavior component. Racing bars interpolate values and rank positions across dated snapshots, while comparison bars reveal multiple stable series on a shared category scale. Share visual tokens and label rules between them, but keep their data contracts and animation logic separate.
 
 For knowledge videos, prefer charts that carry a concrete narrative: model capability timelines, language popularity shifts, market share changes, benchmark deltas, or release cadence. Demo data must be labeled as demo data; sourced data should keep units and source notes in the `ChartFrame` caption.
 

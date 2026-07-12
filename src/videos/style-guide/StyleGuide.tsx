@@ -903,6 +903,7 @@ const RacingBarChartSlide = () => (
             visibleCount={6}
             maxValue={100}
             footerText="timeline / demo snapshots"
+            fillStyle="gradient"
             width={920}
             height={540}
           />

@@ -132,11 +132,13 @@ export const theme = {
     labelHeight: 46,
   },
   chart: {
-    comparisonGradients: [
+    seriesGradients: [
       ["#ffc264", "#ff9418"],
       ["#58c5ea", "#148bd1"],
       ["#72cfa7", "#218f66"],
       ["#b79bea", "#7650c9"],
+      ["#e9a39b", "#b84a42"],
+      ["#b7b4b0", "#6b6865"],
     ],
   },
   code: {
