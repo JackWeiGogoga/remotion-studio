@@ -3,7 +3,7 @@
   <path d="M0 112.5H1400M0 225H1400M0 337.5H1400M0 450H1400M0 562.5H1400M0 675H1400M0 787.5H1400" stroke="#d8d4cb" stroke-width="2"/>
   <path d="M175 0V900M350 0V900M525 0V900M700 0V900M875 0V900M1050 0V900M1225 0V900" stroke="#d8d4cb" stroke-width="2"/>
   <rect x="86" y="76" width="780" height="84" fill="#0a0a0a"/>
-  <text x="118" y="131" fill="#f5f3ee" font-family="Chivo Mono, monospace" font-size="38" font-weight="500">$ media-frame</text>
+  <text x="118" y="131" fill="#f5f3ee" font-family="HarmonyOS Sans SC, monospace" font-size="38" font-weight="500">$ media-frame</text>
   <rect x="86" y="212" width="500" height="472" fill="#f5f3ee" stroke="#0a0a0a" stroke-width="4"/>
   <rect x="126" y="258" width="420" height="42" fill="#ff5a1f"/>
   <rect x="126" y="336" width="312" height="28" fill="#0a0a0a"/>
@@ -19,5 +19,5 @@
   <rect x="988" y="492" width="140" height="24" fill="#6b6865"/>
   <circle cx="1188" cy="628" r="40" fill="#ff5a1f"/>
   <rect x="86" y="740" width="1228" height="2" fill="#0a0a0a"/>
-  <text x="86" y="804" fill="#6b6865" font-family="Chivo Mono, monospace" font-size="34">cover / contain / object-position / hard frame</text>
+  <text x="86" y="804" fill="#6b6865" font-family="HarmonyOS Sans SC, monospace" font-size="34">cover / contain / object-position / hard frame</text>
 </svg>

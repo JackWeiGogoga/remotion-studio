@@ -26,7 +26,7 @@ export const theme = {
     family:
       '"HarmonyOS Sans SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif',
     monoFamily:
-      '"Chivo Mono", "SF Mono", ui-monospace, Menlo, Consolas, monospace',
+      '"HarmonyOS Sans SC", "SF Mono", ui-monospace, Menlo, Consolas, monospace',
     weight: {
       regular: 400,
       medium: 500,

@@ -175,7 +175,7 @@ const CoverLayoutDiagram = () => (
 const CoverSlide = ({ headline, caption }: StyleGuideProps) => (
   <CoverPage
     brand="REMOTION STUDIO / ARCHIVE MONO"
-    edition="STYLE GUIDE / 13 SCENES"
+    edition="STYLE GUIDE"
     eyebrow="中文知识视频 / Visual System"
     title={
       <>

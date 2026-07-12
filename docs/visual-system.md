@@ -62,7 +62,7 @@ Use `CoverPage` for the first frame and `SectionPage` for chapter boundaries. Th
 
 ## Typography
 
-Use HarmonyOS Sans SC for narrative UI and video text, with Chinese system fonts as fallback. Use Chivo Mono only for code and command-like details. Keep letter spacing at `0`.
+Use HarmonyOS Sans SC for narrative UI and video text, with Chinese system fonts as fallback. Keep letter spacing at `0`.
 
 Use `Eyebrow` for a local principle, evidence type, or short content cue; use `Title` for the main scene message, `BodyText` for explanatory copy, and `Caption` for sources, figure notes, or other low-priority text. The default eyebrow marker is a narrow vertical accent bar, not a decorative horizontal dash. Do not repeat the header's section label verbatim in the eyebrow. Use `marker="none"` when the surrounding layout already supplies a strong alignment cue.
 
