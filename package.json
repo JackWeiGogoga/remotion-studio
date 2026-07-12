@@ -14,11 +14,13 @@
   ],
   "dependencies": {
     "@remotion/cli": "4.0.487",
+    "@remotion/tailwind-v4": "4.0.487",
+    "codehike": "1.1.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "remotion": "4.0.487",
-    "@remotion/tailwind-v4": "4.0.487",
-    "tailwindcss": "4.0.0"
+    "tailwindcss": "4.0.0",
+    "zod": "4.3.6"
   },
   "devDependencies": {
     "@remotion/eslint-config-flat": "4.0.487",
@@ -31,8 +33,9 @@
   "scripts": {
     "dev": "remotion studio",
     "build": "remotion bundle",
+    "highlight-code": "node scripts/highlight-code.mjs",
     "upgrade": "remotion upgrade",
-    "lint": "eslint src && tsc"
+    "lint": "eslint src packages && tsc"
   },
   "sideEffects": [
     "*.css"

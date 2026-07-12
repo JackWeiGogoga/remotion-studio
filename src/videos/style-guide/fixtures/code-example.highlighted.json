@@ -1,0 +1,345 @@
+{
+  "value": "const WelcomeScene = ({ name }: { name: string }) => {\n  const frame = useCurrentFrame();\n  const opacity = interpolate(frame, [0, 18], [0, 1], {\n    easing: Easing.bezier(0.16, 1, 0.3, 1),\n    extrapolateLeft: \"clamp\",\n    extrapolateRight: \"clamp\",\n  });\n\n  return (\n    <Scene>\n      <SafeArea style={{ opacity }}>\n        <Title>Hello, {name}</Title>\n      </SafeArea>\n    </Scene>\n  );\n};",
+  "lang": "tsx",
+  "meta": "WelcomeScene.tsx",
+  "code": "const WelcomeScene = ({ name }: { name: string }) => {\n  const frame = useCurrentFrame();\n  const opacity = interpolate(frame, [0, 18], [0, 1], {\n    easing: Easing.bezier(0.16, 1, 0.3, 1),\n    extrapolateLeft: \"clamp\",\n    extrapolateRight: \"clamp\",\n  });\n\n  return (\n    <Scene>\n      <SafeArea style={{ opacity }}>\n        <Title>Hello, {name}</Title>\n      </SafeArea>\n    </Scene>\n  );\n};",
+  "tokens": [
+    [
+      "const",
+      "#FF5A1F"
+    ],
+    " ",
+    [
+      "WelcomeScene",
+      "#7B4AC9"
+    ],
+    " ",
+    [
+      "=",
+      "#FF5A1F"
+    ],
+    " ",
+    [
+      "({ name }",
+      "#1A1A1A"
+    ],
+    [
+      ":",
+      "#FF5A1F"
+    ],
+    " ",
+    [
+      "{ name",
+      "#1A1A1A"
+    ],
+    [
+      ":",
+      "#FF5A1F"
+    ],
+    " ",
+    [
+      "string",
+      "#A66B00"
+    ],
+    " ",
+    [
+      "})",
+      "#1A1A1A"
+    ],
+    " ",
+    [
+      "=>",
+      "#FF5A1F"
+    ],
+    " ",
+    [
+      "{",
+      "#1A1A1A"
+    ],
+    "\n  ",
+    [
+      "const",
+      "#FF5A1F"
+    ],
+    " ",
+    [
+      "frame",
+      "#1A1A1A"
+    ],
+    " ",
+    [
+      "=",
+      "#FF5A1F"
+    ],
+    " ",
+    [
+      "useCurrentFrame",
+      "#7B4AC9"
+    ],
+    [
+      "();",
+      "#1A1A1A"
+    ],
+    "\n  ",
+    [
+      "const",
+      "#FF5A1F"
+    ],
+    " ",
+    [
+      "opacity",
+      "#1A1A1A"
+    ],
+    " ",
+    [
+      "=",
+      "#FF5A1F"
+    ],
+    " ",
+    [
+      "interpolate",
+      "#7B4AC9"
+    ],
+    [
+      "(frame, [",
+      "#1A1A1A"
+    ],
+    [
+      "0",
+      "#2458C7"
+    ],
+    [
+      ",",
+      "#1A1A1A"
+    ],
+    " ",
+    [
+      "18",
+      "#2458C7"
+    ],
+    [
+      "], [",
+      "#1A1A1A"
+    ],
+    [
+      "0",
+      "#2458C7"
+    ],
+    [
+      ",",
+      "#1A1A1A"
+    ],
+    " ",
+    [
+      "1",
+      "#2458C7"
+    ],
+    [
+      "], {",
+      "#1A1A1A"
+    ],
+    "\n    ",
+    [
+      "easing:",
+      "#1A1A1A"
+    ],
+    " ",
+    [
+      "Easing.bezier",
+      "#7B4AC9"
+    ],
+    [
+      "(",
+      "#1A1A1A"
+    ],
+    [
+      "0.16",
+      "#2458C7"
+    ],
+    [
+      ",",
+      "#1A1A1A"
+    ],
+    " ",
+    [
+      "1",
+      "#2458C7"
+    ],
+    [
+      ",",
+      "#1A1A1A"
+    ],
+    " ",
+    [
+      "0.3",
+      "#2458C7"
+    ],
+    [
+      ",",
+      "#1A1A1A"
+    ],
+    " ",
+    [
+      "1",
+      "#2458C7"
+    ],
+    [
+      "),",
+      "#1A1A1A"
+    ],
+    "\n    ",
+    [
+      "extrapolateLeft:",
+      "#1A1A1A"
+    ],
+    " ",
+    [
+      "\"clamp\"",
+      "#1F8A5F"
+    ],
+    [
+      ",",
+      "#1A1A1A"
+    ],
+    "\n    ",
+    [
+      "extrapolateRight:",
+      "#1A1A1A"
+    ],
+    " ",
+    [
+      "\"clamp\"",
+      "#1F8A5F"
+    ],
+    [
+      ",",
+      "#1A1A1A"
+    ],
+    "\n  ",
+    [
+      "});",
+      "#1A1A1A"
+    ],
+    "\n\n  ",
+    [
+      "return",
+      "#FF5A1F"
+    ],
+    " ",
+    [
+      "(",
+      "#1A1A1A"
+    ],
+    "\n    ",
+    [
+      "<",
+      "#FF5A1F"
+    ],
+    [
+      "Scene",
+      "#A66B00"
+    ],
+    [
+      ">",
+      "#FF5A1F"
+    ],
+    "\n      ",
+    [
+      "<",
+      "#FF5A1F"
+    ],
+    [
+      "SafeArea",
+      "#A66B00"
+    ],
+    " ",
+    [
+      "style",
+      "#1A1A1A"
+    ],
+    [
+      "=",
+      "#FF5A1F"
+    ],
+    [
+      "{{ opacity }}",
+      "#1A1A1A"
+    ],
+    [
+      ">",
+      "#FF5A1F"
+    ],
+    "\n        ",
+    [
+      "<",
+      "#FF5A1F"
+    ],
+    [
+      "Title",
+      "#A66B00"
+    ],
+    [
+      ">",
+      "#FF5A1F"
+    ],
+    [
+      "Hello, {name}",
+      "#1A1A1A"
+    ],
+    [
+      "</",
+      "#FF5A1F"
+    ],
+    [
+      "Title",
+      "#A66B00"
+    ],
+    [
+      ">",
+      "#FF5A1F"
+    ],
+    "\n      ",
+    [
+      "</",
+      "#FF5A1F"
+    ],
+    [
+      "SafeArea",
+      "#A66B00"
+    ],
+    [
+      ">",
+      "#FF5A1F"
+    ],
+    "\n    ",
+    [
+      "</",
+      "#FF5A1F"
+    ],
+    [
+      "Scene",
+      "#A66B00"
+    ],
+    [
+      ">",
+      "#FF5A1F"
+    ],
+    "\n  ",
+    [
+      ");",
+      "#1A1A1A"
+    ],
+    "\n",
+    [
+      "};",
+      "#1A1A1A"
+    ]
+  ],
+  "annotations": [],
+  "themeName": "archive-mono",
+  "style": {
+    "color": "#1a1a1a",
+    "background": "#ebe8e3",
+    "colorScheme": "light"
+  }
+}

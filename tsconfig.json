@@ -8,8 +8,14 @@
     "lib": ["es2015"],
     "esModuleInterop": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "forceConsistentCasingInFileNames": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "baseUrl": ".",
+    "paths": {
+      "@remotion-studio/video-themes": ["packages/video-themes/src/index.ts"],
+      "@remotion-studio/remotion-kit": ["packages/remotion-kit/src/index.ts"]
+    }
   },
   "exclude": ["remotion.config.ts"]
 }

@@ -1,0 +1,17 @@
+{
+  "name": "@remotion-studio/remotion-kit",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@remotion-studio/video-themes": "0.1.0",
+    "codehike": "1.1.0"
+  },
+  "peerDependencies": {
+    "react": "19.2.3",
+    "remotion": "4.0.487"
+  }
+}
