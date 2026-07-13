@@ -1,0 +1,18 @@
+{
+  "speaker": "jackwei",
+  "visibility": "tracked",
+  "default": "2026-07-02-jackwei-natural-cn-v01.wav",
+  "references": [
+    {
+      "file": "2026-07-02-jackwei-natural-cn-v01.wav",
+      "style": "natural",
+      "language": "cn",
+      "version": 1,
+      "durationSeconds": 28.948,
+      "sampleRateHz": 48000,
+      "channels": 1,
+      "sourceFile": "my-reference1.wav",
+      "notes": "Approved tracked fallback reference."
+    }
+  ]
+}

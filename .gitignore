@@ -20,6 +20,12 @@ coverage/
 # Local voice references are private by default.
 resources/voices/*
 !resources/voices/.gitkeep
+!resources/voices/*/
+resources/voices/*/*
+!resources/voices/*/README.md
+!resources/voices/*/profile.json
+!resources/voices/*/tracked/
+!resources/voices/*/tracked/**
 
 # Environment and logs
 .env

@@ -29,7 +29,7 @@ docs/            Production and visual documentation
 packages/        Shared workspace packages
 public/shared/   Shared fonts, audio, and brand assets
 public/videos/   Approved render assets namespaced by video ID
-resources/voices/ Local TTS reference voices, ignored by Git
+resources/voices/ Speaker-first TTS references with private/tracked tiers
 scripts/         Repository automation
 src/videos/      Video compositions and scenes
 .tmp/tts/        Temporary TTS output, ignored by Git
@@ -37,6 +37,10 @@ out/             Generated renders, ignored by Git
 ```
 
 Tailwind CSS is available for static layout and styling. Frame-dependent animation must be driven by Remotion APIs such as `useCurrentFrame()` and `interpolate()` rather than CSS transitions or animation classes.
+
+## Audio
+
+Use the scene-based workflow in [docs/audio-workflow.md](docs/audio-workflow.md) for local IndexTTS voiceover generation, cleanup, frame-count timing, and artifact repair. References are grouped by speaker under `resources/voices/<speaker>/`: `private/` holds ignored local recordings, `tracked/` holds approved versioned fallbacks, and `profile.json` records the preferred and fallback references.
 
 ## License
 

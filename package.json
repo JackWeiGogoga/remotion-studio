@@ -14,6 +14,7 @@
   ],
   "dependencies": {
     "@remotion/cli": "4.0.487",
+    "@remotion/media": "4.0.487",
     "@remotion/tailwind-v4": "4.0.487",
     "codehike": "1.1.0",
     "react": "19.2.3",
@@ -34,6 +35,9 @@
     "dev": "remotion studio",
     "build": "remotion bundle",
     "highlight-code": "node scripts/highlight-code.mjs",
+    "voice:prepare": "python3 scripts/prepare-reference-voice.py",
+    "voice:generate": "python3 scripts/generate-indextts-voiceover.py",
+    "voice:clean": "python3 scripts/clean-voiceover.py",
     "upgrade": "remotion upgrade",
     "lint": "eslint src packages && tsc"
   },

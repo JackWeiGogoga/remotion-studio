@@ -1,0 +1,6 @@
+{
+  "speaker": "jackwei",
+  "preferredReference": "private/2026-07-13-jackwei-natural-cn-v02.wav",
+  "fallbackReference": "tracked/2026-07-02-jackwei-natural-cn-v01.wav",
+  "preferredNotes": "User-validated on 2026-07-13 without the prior recurring short chi artifacts."
+}

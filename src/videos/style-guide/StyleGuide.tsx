@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { Audio } from "@remotion/media";
 import {
   AnimatedImage,
   Composition,
@@ -37,36 +38,34 @@ import {
   Stack,
   TextFit,
   Title,
-  seconds,
   stagger,
 } from "@remotion-studio/remotion-kit";
 import codeExample from "./fixtures/code-example.highlighted.json";
+import {
+  styleGuideDurationInFrames,
+  styleGuideVoiceover,
+  type StyleGuideVoiceoverTiming,
+} from "./voiceover";
 
 const highlightedCode = codeExample as unknown as HighlightedCode;
 const fps = canvasPresets.landscape.fps;
-const coverDuration = seconds(4, fps);
-const sectionDuration = seconds(3, fps);
-const layoutDuration = seconds(5, fps);
-const typeDuration = seconds(4, fps);
-const textMotionDuration = seconds(5, fps);
-const mediaDuration = seconds(4, fps);
-const chartLineDuration = seconds(4, fps);
-const chartRaceDuration = seconds(7, fps);
-const comparisonDuration = seconds(5, fps);
-const tableDuration = seconds(4, fps);
-const codeMotionDuration = seconds(4, fps);
-const storyDuration = seconds(4, fps);
-const sectionStart = coverDuration;
-const layoutStart = sectionStart + sectionDuration;
-const typeStart = layoutStart + layoutDuration;
-const textMotionStart = typeStart + typeDuration;
-const mediaStart = textMotionStart + textMotionDuration;
-const chartLineStart = mediaStart + mediaDuration;
-const chartRaceStart = chartLineStart + chartLineDuration;
-const comparisonStart = chartRaceStart + chartRaceDuration;
-const tableStart = comparisonStart + comparisonDuration;
-const codeMotionStart = tableStart + tableDuration;
-const narrativeStart = codeMotionStart + codeMotionDuration;
+
+const VoiceoverSequence = ({
+  children,
+  timing,
+}: {
+  children: ReactNode;
+  timing: StyleGuideVoiceoverTiming;
+}) => (
+  <Sequence
+    from={timing.start}
+    durationInFrames={timing.durationInFrames}
+    premountFor={fps}
+  >
+    {children}
+    <Audio src={staticFile(timing.src)} />
+  </Sequence>
+);
 
 export const styleGuideSchema = z.object({
   headline: z.string(),
@@ -1230,7 +1229,7 @@ const TweetStory = () => (
   <StorySlide
     section="叙事示例 / Source"
     index="11 / 13"
-    subtitle="他们给出的不是更乐观的预测，而是一条主动选择的路径。"
+    subtitle="他们没有给出更乐观的预测。他们描绘了一条需要主动走出的道路。"
     eyebrow="01 / 来源"
     title="Daniel Kokotajlo 是这么介绍的："
     quote={
@@ -1305,7 +1304,7 @@ const ForecastProcessStory = () => (
           height={667}
           fit="cover"
           loopBehavior="loop"
-          durationInFrames={storyDuration}
+          durationInFrames={styleGuideVoiceover.forecastStory.durationInFrames}
           style={{
             width: "100%",
             height: "100%",
@@ -1319,54 +1318,48 @@ const ForecastProcessStory = () => (
 
 export const StyleGuide = ({ headline, caption }: StyleGuideProps) => (
   <>
-    <Sequence durationInFrames={coverDuration}>
+    <VoiceoverSequence timing={styleGuideVoiceover.cover}>
       <CoverSlide headline={headline} caption={caption} />
-    </Sequence>
-    <Sequence from={sectionStart} durationInFrames={sectionDuration}>
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.section}>
       <SectionTransitionSlide />
-    </Sequence>
-    <Sequence from={layoutStart} durationInFrames={layoutDuration}>
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.layout}>
       <LayoutSystemSlide />
-    </Sequence>
-    <Sequence from={typeStart} durationInFrames={typeDuration}>
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.typography}>
       <TypographySlide />
-    </Sequence>
-    <Sequence from={textMotionStart} durationInFrames={textMotionDuration}>
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.textMotion}>
       <TextMotionSlide />
-    </Sequence>
-    <Sequence from={mediaStart} durationInFrames={mediaDuration}>
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.media}>
       <MediaSystemSlide />
-    </Sequence>
-    <Sequence from={chartLineStart} durationInFrames={chartLineDuration}>
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.chartLine}>
       <LlmTimelineChartSlide />
-    </Sequence>
-    <Sequence from={chartRaceStart} durationInFrames={chartRaceDuration}>
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.chartRace}>
       <RacingBarChartSlide />
-    </Sequence>
-    <Sequence from={comparisonStart} durationInFrames={comparisonDuration}>
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.comparison}>
       <ComparisonChartSlide />
-    </Sequence>
-    <Sequence from={tableStart} durationInFrames={tableDuration}>
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.table}>
       <TableSystemSlide />
-    </Sequence>
-    <Sequence from={codeMotionStart} durationInFrames={codeMotionDuration}>
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.codeMotion}>
       <CodeMotionSlide />
-    </Sequence>
-    <Sequence from={narrativeStart} durationInFrames={storyDuration}>
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.sourceStory}>
       <TweetStory />
-    </Sequence>
-    <Sequence
-      from={narrativeStart + storyDuration}
-      durationInFrames={storyDuration}
-    >
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.contextStory}>
       <Ai2027Story />
-    </Sequence>
-    <Sequence
-      from={narrativeStart + storyDuration * 2}
-      durationInFrames={storyDuration}
-    >
+    </VoiceoverSequence>
+    <VoiceoverSequence timing={styleGuideVoiceover.forecastStory}>
       <ForecastProcessStory />
-    </Sequence>
+    </VoiceoverSequence>
   </>
 );
 
@@ -1374,7 +1367,7 @@ export const StyleGuideComposition = () => (
   <Composition
     id="style-guide"
     component={StyleGuide}
-    durationInFrames={narrativeStart + storyDuration * 3}
+    durationInFrames={styleGuideDurationInFrames}
     fps={fps}
     width={canvasPresets.landscape.width}
     height={canvasPresets.landscape.height}
